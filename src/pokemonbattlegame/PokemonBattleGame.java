@@ -29,16 +29,35 @@ public class PokemonBattleGame
     
     public static void main(String[] args) throws InterruptedException
     {
-        PokemonBattleGame game = new PokemonBattleGame();
+        // Show the professor Oaks intro JFrame 
+        java.awt.EventQueue.invokeLater(new Runnable() 
+        {
+            public void run() 
+            {
+                GameSetup oaksIntro = new GameSetup();
+                oaksIntro.setVisible(true);
+            }
+        });
         
-        // Check if user exists, load user data or create new user
-        game.setupGame();
+        // Create a new game
+        PokemonBattleGame game = new PokemonBattleGame();
+      
+        // Setup the game
+        new SetupGame(game);
         
         // Prompt user for start 
         game.startBattle();
             
         // Randomly generate an opponent
-        game.generateOpponent();
+        try 
+        {
+            GenerateOpponent generatedOpponent = new GenerateOpponent();
+            generatedOpponent.generateOpponent(game.getTrainer());
+            game.setOpponent(generatedOpponent.getOpponent());
+        } catch (InterruptedException e)
+        {
+            System.out.println("Error generating opponent!" + e.getMessage());
+        }
             
         // Randomly generate pokemon teams 
         game.generatePokemonTeams();
@@ -50,276 +69,7 @@ public class PokemonBattleGame
         game.runBattle();
         
     }
-    
-    public void setupGame() throws InterruptedException
-    {
-         // Prompt user for username 
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Professor Oak: Hello there! Welcome to the world of Pokemon! "
-                + "My name is Oak! People call me the Pokemon Prof! This world "
-                + "is inhabited by creatures called Pokemon! For some people, "
-                + "Pokemon are pets. Others use them for fights. Myself... I study "
-                + "Pokemon as a profession.");
-        System.out.println("Professor Oak: What is your username, Trainer? ");
-        
-        // Check if user exists in 'Trainers.json'
-        String username  = scanner.nextLine().trim();    
-       
-       // Open 'Trainers.json' in the working directory 
-       File trainersFile = new File("Trainers.json");
-       
-       // Create an array to hold existing trainers
-       Trainer[] trainers;
-       
-       if(trainersFile.exists())
-       {
-          
-            // Open 'Pokemon.json'
-            InputStream inputStreamPokemon = PokemonBattleGame.class.getResourceAsStream("Pokemon.json");
-       
-            // Opens file 'Trainers.json' and then wraps the file reader in a buffered reader for reading the file in chunks
-            try (BufferedReader trainersReader = new BufferedReader(new FileReader(trainersFile));
-                BufferedReader pokemonReader = new BufferedReader(new InputStreamReader(inputStreamPokemon))) {
-            
-                // Check files are found (stream is not null), to avoid NullPointerException
-                if (inputStreamPokemon == null) 
-                {
-                    System.out.println("Professor Oak: Oh no! I lost the pokemon files!");
-                    Thread.sleep(2000);
-                    System.out.println("Professor Oak: They must be around here somewhere...");
-                    return;
-                }
-
-                // Read JSON data from trainesReader and convert it into an array of Trainer objects
-                trainers = new Gson().fromJson(trainersReader, Trainer[].class);
-                
-                // Read JSON data from pokemonReader and convert it into an array of Pokemon objects
-                this.pokemons = new Gson().fromJson(pokemonReader, Pokemon[].class);
-           
-                boolean found = false;
-                
-                // For every trainer in the trainers array
-                for (Trainer trainer : trainers)
-                {
-                    // If the user's username matches with an existing Trainer's username
-                    if (trainer.getUsername().equals(username))                      
-                    { 
-                        // Set found to true
-                        found = true;
-                        this.trainer = trainer;
-                        // Parse score associated with username found 
-                        int score = this.trainer.getScore();
-                        // Print out Trainer name and score
-                        System.out.println("Professor Oak: Welcome back " + trainer.getName() + "! Your score is: " + score);
-                        break;
-                    }
-                }
-
-                // If the user's username is not found
-                if (!found)
-                {   
-                    // Prompt user for name
-                    System.out.println("Professor Oak: You must be new around here! What is your name?"); 
-                    String name = scanner.nextLine().trim(); 
-                    String challengeMessage = "";
-                    
-                    // Create new trainer
-                    this.trainer = new Trainer(username, name, challengeMessage);
-                        
-                    // Prompt user for starter pokemon
-                    System.out.println("Professor Oak: Ah, splendid! A fine name indeed.");
-                    // Give 2 second delay in between each message
-                    Thread.sleep(2000);
-                    System.out.println("Now, every great journey begins with a choice.");
-                    Thread.sleep(2000);
-                    System.out.println("In my lab, I have three Pokemon waiting to meet their first partner.");
-                    Thread.sleep(2000);
-                    System.out.println("Choose wisely, for this bond will shape your path ahead."); 
-                    Thread.sleep(2000);
-                    
-                    boolean pokemonChosen = false;
-                    int selection;
-                    
-                    // While a starterPokemon has not been chosen
-                    while (pokemonChosen == false)
-                    {
-                        System.out.println("\n(1) Bulbasaur: A grass-type pokemon with a gentle yet resilient spirit");
-                        Thread.sleep(2000); 
-                        System.out.println("(2) Charmander: A fire-type pokemon that is both passionate and determined");
-                        Thread.sleep(2000);
-                        System.out.println("(3) Squirtle: A water-type pokemon with a playful and loyal heart");
-                        Thread.sleep(2000);
-                        System.out.println("(4) None: I just don't feel a connection to any of these...\n");
-                        Thread.sleep(2000);
-                        System.out.println("Professor Oak: Which Pokemon will you choose? Enter a digit between 1-4...");
-                    
-                        // Error handling for user input
-                        try
-                        {
-                            // Set user selection as next token scanned in 
-                            selection = Integer.parseInt(scanner.nextLine().trim());
-                    
-                            if (selection == 1)
-                            {
-                                System.out.println("Professor Oak: Excellent choice! Bulbasaur will be a kind and reliable companion.");
-             
-                                // For each pokemon in 'Pokemon.json'
-                                for (Pokemon pokemon : pokemons)
-                                {
-                                    // If the pokemon name is Bulbasaur
-                                    if (pokemon.getName().equals("Bulbasaur"))
-                                    {
-                                        // Assign the starter pokemon of the new trainer to Bulbasaur
-                                        this.trainer.setStarterPokemon(pokemon);
-                                        break;
-                                    }
-                                }
-                                pokemonChosen = true;
-                            }
-                            else if (selection == 2)
-                            {
-                                System.out.println("Professor Oak: Ah, Charmander! A perfect choice for a bold Trainer!");
-                                    
-                                // For each pokemon in 'Pokemon.json'
-                                for (Pokemon pokemon : pokemons)
-                                {
-                                    // If the pokemon name is Charmander
-                                    if (pokemon.getName().equals("Charmander"))
-                                    {
-                                        // Assign the starter pokemon of the new trainer to Charmander
-                                        this.trainer.setStarterPokemon(pokemon);
-                                        break;
-                                    }
-                                }
-                                pokemonChosen = true;
-                            }
-                            else if (selection == 3)
-                            {
-                                System.out.println("Professor Oak: Squirtle, eh? Smart choice. Cool, calm and ready for battle!");
-                                    
-                                // For each pokemon in 'Pokemon.json'
-                                for (Pokemon pokemon : pokemons)
-                                {
-                                    // If the pokemon name is Squirtle
-                                    if (pokemon.getName().equals("Squirtle"))
-                                    {
-                                        // Assign the starter pokemon of the new trainer to Squirtle
-                                        this.trainer.setStarterPokemon(pokemon);
-                                        break;
-                                    }
-                                }
-                                pokemonChosen = true;
-                            }
-                            else if (selection == 4)
-                            {
-                                System.out.println("Professor Oak: Hmmm... It seems like all the other Pokemon have already been taken by Trainers who arrived earlier.");
-                                Thread.sleep(2000);
-                                System.out.println("Wait a second! I do have one more Pokemon left.");
-                                Thread.sleep(2000);
-                                System.out.println("But I must warn you-");
-                                Thread.sleep(2000);
-                                System.out.println("It doesn't like to stay inside its Poke Ball, and it can be very... difficult to train.");
-                                Thread.sleep(2000);
-                                System.out.println("\n(1) Pikachu: An electric-type pokemon with quick reflexes and a feisty attitude\n");
-                                Thread.sleep(2000);
-                                System.out.println("Professor Oak: Enter '1' to choose Pikachu OR press any other key to select a previous Pokemon...");
-
-                                selection = Integer.parseInt(scanner.nextLine().trim());
-
-                                if (selection == 1)
-                                {
-                                    System.out.println("Professor Oak: So you really want Pikachu, eh? Do not fear! With great patience and trust, Pikachu "
-                                            + "might just become your greatest partner. Besides... I once knew a boy named Ash who tamed his Pikachu!");
-
-                                    // For each pokemon in 'Pokemon.json'
-                                    for (Pokemon pokemon : pokemons)
-                                    {
-                                        // If the pokemon name is Pikachu
-                                        if (pokemon.getName().equals("Pikachu"))
-                                        {
-                                            // Assign the starter pokemon of the new trainer to Pikachu
-                                            this.trainer.setStarterPokemon(pokemon);
-                                            break;
-                                        }
-                                    }
-                                    pokemonChosen = true;
-                                }
-                            } 
-                            System.out.println("Professor Oak: Now. Every trainer needs their battle challenge line!");
-                            Thread.sleep(2000);
-                            System.out.println("What will yours be?");
-                            challengeMessage = scanner.nextLine().trim();
-                            this.trainer.setChallengeMessage(challengeMessage);
-                            appendNewTrainer();
-                        }
-                        // If number isn't entered (can't be converted into a string), return eror message
-                        catch (NumberFormatException e)
-                        {
-                            System.out.println("Professor Oak: That doesn't look like a number, Trainer. Enter a digit between 1-4.");         
-                        }
-                    }    
-                } 
-            }
-            // If file 'Trainers.json' is not found, return error message
-            catch (FileNotFoundException e)
-            {
-                System.out.println("Professor Oak: Oooops..." + e.getMessage());
-            }
-            // If input/output operations fail, return error message
-            catch (IOException e)
-            {
-                System.out.println("Professor Oak: Oooops..." + e.getMessage());
-            }  
-        }   
-    }
-    
-    public void appendNewTrainer()
-    {
-        // Create a GSON object to perform conversions from JSON to list of trainer objects and vice versa
-        Gson gson = new Gson();
-        
-        // Creates a new list of trainer objects that can grow dynamically (be appended to)
-        List<Trainer> trainers = new ArrayList<>();
-        
-        // Trainers.json file for reading and writing to
-        File file = new File("Trainers.json");
-        
-        // If the file exists
-        if (file.exists())
-        {
-            // Create a new file reader object that can read 'Trainers.json' 
-            try (FileReader reader = new FileReader(file))
-            {
-                // Extract type of list, for converting JSON into a list containing trainer objects
-                Type listType = new TypeToken<List<Trainer>>() {}.getType();
-                
-                // Read JSON from 'Trainers.json' and convert to a list of trainer objects 
-                trainers = gson.fromJson(reader, listType);
-                
-                // If there are no trainers in 'Trainers.json', create a new empty list of Trainer objects
-                if (trainers == null) trainers = new ArrayList<>();
-            }
-            // If input/output operations fail, return error message
-            catch (IOException e)
-            {
-                System.out.println("Professor Oak: Oooops..." + e.getMessage());
-            }
-        }
-        trainers.add(this.trainer);
-        
-        // Create a new filewriter object that can write to 'Trainers.json'
-        try (FileWriter writer = new FileWriter(file))
-        {
-            // Convert the list of trainer objects to JSON and write JSON to 'Trainers.json'
-            gson.toJson(trainers, writer);
-        }
-        // If input/output operations fail, return error message
-        catch (IOException e)
-        {
-            System.out.println("Professor Oak: Oooops..." + e.getMessage());
-        }
-    }
-    
+   
     public void startBattle() throws InterruptedException
     {
             System.out.println("Professor Oaks: It is now time for you and " + this.trainer.getStarterPokemon().getName() + " to"
@@ -331,53 +81,6 @@ public class PokemonBattleGame
             // Open scanner to register user input
             Scanner scanner = new Scanner (System.in);
             scanner.nextLine();
-    }
-    
-    public void generateOpponent() throws InterruptedException
-    {
-        // Open 'Trainers.json'
-        InputStream inputStreamTrainers = PokemonBattleGame.class.getResourceAsStream("Trainers.json");
-        
-        // Wraps the file reader in a buffered reader for reading the file in chunks
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStreamTrainers)))
-        {
-            // Create a GSON object to perform conversions from JSON to list of trainer objects and vice versa
-            Gson gson = new Gson();
-      
-            // Extract type of list, for converting JSON into a list containing trainer objects
-            Type listType = new TypeToken<List<Trainer>>() {}.getType();
-            
-            // Read JSON from 'Trainers.json' and convert to a list of trainer objects 
-            List<Trainer> trainers = gson.fromJson(reader, listType);
-                
-            // Remove current user from list of possible Trainers to battle
-            for (Iterator<Trainer> currentTrainer = trainers.iterator(); currentTrainer.hasNext();) 
-            {
-                // Get next trainer in the list 
-                Trainer nextTrainer = currentTrainer.next();
-                if (nextTrainer.getUsername().equals(this.trainer.getUsername()))
-                {
-                    currentTrainer.remove();
-                }
-            }
-      
-            // Create Random object for selecting a random Trainer    
-            Random random = new Random();
-            this.opponent = trainers.get(random.nextInt(trainers.size()));
-            
-            System.out.println(opponent.getName() + ": " + opponent.getChallengeMessage());
-            Thread.sleep(2000);   
-        }
-        // If file 'Trainers.json' is not found, return error message
-        catch (FileNotFoundException e)
-        {
-            System.out.println("Professor Oak: Oooops..." + e.getMessage());
-        }
-        // If input/output operations fail, return error message
-        catch (IOException e)
-        {
-            System.out.println("Professor Oak: Oooops..." + e.getMessage());
-        }
     }
     
     public void generatePokemonTeams()
@@ -911,20 +614,67 @@ public class PokemonBattleGame
         {
             try
             {
-                generateOpponent();
-                generatePokemonTeams();
-                displayGameDetails();
-                runBattle();
-            } catch (InterruptedException ex)
+                // Prompt user for start 
+            this.startBattle();
+            
+            // Randomly generate an opponent
+            try 
             {
-                System.out.println("[ERROR] " + ex.getMessage());
+                GenerateOpponent generatedOpponent = new GenerateOpponent();
+                generatedOpponent.generateOpponent(this.getTrainer());
+                this.setOpponent(generatedOpponent.getOpponent());
+            } catch (InterruptedException e)
+            {
+                System.out.println("Error generating opponent!" + e.getMessage());
             }
-        } else
-        {
-            System.out.println("Thanks for playing!");
+            
+            // Randomly generate pokemon teams 
+            this.generatePokemonTeams();
+
+            // Display game details 
+            this.displayGameDetails();
+        
+            // Enter battle loop 
+            this.runBattle();
+                } catch (InterruptedException e)
+                {
+                    System.out.println("[ERROR] " + e.getMessage());
+                }
+            } else
+            {
+                System.out.println("Thanks for playing!");
+            }
         }
+    // Setter method for trainer
+    public void setTrainer(Trainer trainer) 
+    {
+        this.trainer = trainer;
     }
     
+    // Getter method for trainer
+    public Trainer getTrainer() 
+    {
+        return trainer;
+    }
+    
+    // Getter method for opponent
+    public Trainer getOpponent() 
+    {
+        return opponent;
+    }
+
+    // Setter method for opponent
+    public void setOpponent(Trainer opponent) 
+    {
+        this.opponent = opponent;
+    }
+
+    // Setter method for pokemons
+    public void setPokemons(Pokemon[] pokemons) 
+    {
+        this.pokemons = pokemons;
+    }
+
     public boolean isSuperEffective(pokemonbattlegame.Type attackType, pokemonbattlegame.Type defenderType)
     {
         for (String strongType : attackType.getStrongAgainst())
