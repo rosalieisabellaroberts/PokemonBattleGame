@@ -4,6 +4,9 @@
  */
 package pokemonbattlegame;
 
+import java.util.ArrayList;
+import java.sql.*;
+
 /**
  *
  * @author dilro
@@ -15,26 +18,36 @@ public class PokemonBattleGame
     private Pokemon trainerCurrentPokemon; 
     private Pokemon opponentCurrentPokemon;
     private Pokemon[] pokemons;
+    private ArrayList<Type> types;
     
     public static void main(String[] args) throws InterruptedException
     {
+        // Create a new game
+        PokemonBattleGame game = new PokemonBattleGame();
         
-        // Initalise the PokemonBattleGame database 
-        DatabaseManager.createTables();
-        DatabaseManager.populateTypesTable();
-        DatabaseManager.populatePokemonTable(DatabaseManager.getPokemonList());
-        DatabaseManager.populateWeaknesses();
-        DatabaseManager.populateStrengths();
-        DatabaseManager.populateMoves();
-        DatabaseManager.populateTrainers();
+        // Establish a connection
+        try (Connection connection = DatabaseManager.getConnection())
+        {
+            // Initalise the PokemonBattleGame database
+            DatabaseManager.createTables(connection);
+            DatabaseManager.populateTypesTable(connection);
+            DatabaseManager.populatePokemonTable(DatabaseManager.getPokemonList(), connection);
+            DatabaseManager.populateWeaknesses(connection);
+            DatabaseManager.populateStrengths(connection);
+            DatabaseManager.populateMoves(connection);
+            DatabaseManager.populateTrainers(connection);
+        
+            // Load the effectiveness of all the types 
+            game.setTypes(DatabaseManager.loadTypesWithEffectiveness(connection));
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        } 
         
         // Show the professor Oaks intro JFrame 
         GameSetup oaksIntro = new GameSetup();
         oaksIntro.setVisible(true);
         
-        // Create a new game
-        PokemonBattleGame game = new PokemonBattleGame();
-      
         // Setup the game
         SetupGame setup = new SetupGame();
         Trainer trainer = setup.run();
@@ -100,5 +113,15 @@ public class PokemonBattleGame
     public void setPokemons(Pokemon[] pokemons) 
     {
         this.pokemons = pokemons;
+    }
+    
+    private ArrayList<Type> getTypes()
+    {
+        return types;
+    }
+    
+    public void setTypes(ArrayList<Type> types) 
+    {
+        this.types = types;
     }
 }

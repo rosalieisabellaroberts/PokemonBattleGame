@@ -12,12 +12,14 @@ import java.util.*;
 public class Type
 {
     private String name;
-    private List<String> weakAgainst;
-    private List<String> strongAgainst;
+    private ArrayList<Type> weakAgainst;
+    private ArrayList<Type> strongAgainst;
     
     public Type(String name)
     {
        this.name = name;
+       this.weakAgainst = new ArrayList<>();
+       this.strongAgainst = new ArrayList<>();
     }
     
     public String getName()
@@ -25,14 +27,24 @@ public class Type
         return name;
     }
     
-    public List<String> getWeakAgainst()
+    public ArrayList<Type> getWeakAgainst()
     {
         return weakAgainst;
     }
     
-    public List<String> getStrongAgainst()
+    public ArrayList<Type> getStrongAgainst()
     {
         return strongAgainst;
     }
-
+    
+    public void setStrongAgainst(Type type)
+    {
+        strongAgainst.add(type);
+    }
+    
+    public void setWeakAgainst(Type type)
+    {
+        weakAgainst.add(type);
+    }
+    
 }

@@ -20,21 +20,26 @@ public class DatabaseManager
     // Return a connection to the Derby database 
     public static Connection getConnection() throws SQLException
     {
-        // If there is no existing connection object, or it was previously closed
-        if (connection == null || connection.isClosed())
+        try 
         {
-            // Create a new connection to the derby database using the URL
-           connection = DriverManager.getConnection(URL);
+           // If there is no existing connection object, or it was previously closed
+            if (connection == null || connection.isClosed())
+            {
+                // Create a new connection to the derby database using the URL
+                connection = DriverManager.getConnection(URL);
+            }     
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
         }
         // Return the active connection 
         return connection;
     }
     
     // Create types, trainers, pokemon, moves, weaknesses, and strengths
-    public static void createTables()
+    public static void createTables(Connection connection)
     {
-        try (Connection connection = getConnection();
-            Statement statement = connection.createStatement())
+        try (Statement statement = connection.createStatement())
         {
             
             dropTableIfExists(statement, "Moves");
@@ -89,6 +94,8 @@ public class DatabaseManager
                     "FOREIGN KEY (typeName) REFERENCES Types(typeName)," +
                     "FOREIGN KEY (strongAgainst) REFERENCES Types(typeName))");
             
+            statement.close();
+            
         } catch (SQLException e)
         {
             e.printStackTrace();
@@ -96,12 +103,12 @@ public class DatabaseManager
     }
     
     // Add pokemon types into types table
-    public static void populateTypesTable()
+    public static void populateTypesTable(Connection connection)
     {
         String[] types = {"Grass", "Fire", "Water", "Bug", "Electric", "Normal",
             "Fighting", "Rock", "Psychic", "Ghost"};
 
-        try (Connection connection = getConnection())
+        try
         {
             String sql = "INSERT INTO Types (typeName) VALUES (?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -193,9 +200,9 @@ public class DatabaseManager
     }
     
     // Populate pokemon data into pokemon table 
-    public static void populatePokemonTable(List<Pokemon> pokemons) 
+    public static void populatePokemonTable(List<Pokemon> pokemons, Connection connection) 
     {
-        try (Connection connection = getConnection())
+        try
         {
             String sql = "INSERT INTO Pokemon (name, type, HP, originalHP) VALUES (?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -221,7 +228,7 @@ public class DatabaseManager
     }
     
     // Populate weakAgainst types into weaknesses table
-    public static void populateWeaknesses()
+    public static void populateWeaknesses(Connection connection)
     {
         String[][] weaknesses = 
         {
@@ -237,7 +244,7 @@ public class DatabaseManager
             {"Bug", "Fire"},
         };
         
-        try (Connection connection = getConnection())
+        try
         {
             String sql = "INSERT INTO Weaknesses (typeName, weakAgainst) VALUES (?,?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -260,7 +267,7 @@ public class DatabaseManager
     }
     
      // Populate strongAgainst types into strengths table
-    public static void populateStrengths()
+    public static void populateStrengths(Connection connection)
     {
         String[][] strengths = 
         {
@@ -275,7 +282,7 @@ public class DatabaseManager
             {"Ghost", "Psychic"}
         };
         
-        try (Connection connection = getConnection())
+        try
         {
             String sql = "INSERT INTO Strengths (typeName, strongAgainst) VALUES (?,?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -298,7 +305,7 @@ public class DatabaseManager
     }
     
     // Populate trainer data into trainer table
-    public static void populateTrainers()
+    public static void populateTrainers(Connection connection)
     {
         String[][] trainers = 
         {
@@ -314,7 +321,7 @@ public class DatabaseManager
             {"smogAndSlay", "Koga", "160", "7", "Gengar", "You just walked into a gas chamber... I can already smell victory!"},
         };
         
-        try (Connection connection = getConnection())
+        try 
         {
             String sql = "INSERT INTO Trainers (username, name, score, level, starterPokemon, challengeMessage)" +
                     "VALUES (?, ?, ?, ?, ?, ?)";
@@ -343,7 +350,7 @@ public class DatabaseManager
     }
         
     // Populate moves data into moves table 
-    public static void populateMoves() 
+    public static void populateMoves(Connection connection) 
     {
         String[][] moves = {
             {"Bulbasaur", "Vine Whip", "45", "100"},
@@ -474,7 +481,7 @@ public class DatabaseManager
             {"Flareon", "Flamethrower", "90", "100"},
         };
 
-        try (Connection connection = getConnection()) 
+        try 
         {
             String sql = "INSERT INTO Moves (pokemonName, name, power, accuracy) VALUES (?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -499,12 +506,42 @@ public class DatabaseManager
         }
     }
     
+    // Load the pokemon moves 
+    public static void loadPokemonMoves(Connection connection, Pokemon pokemon)
+    {
+        try
+        {
+            String sql = "SELECT name, power, accuracy FROM MOVES WHERE pokemonName = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            
+            preparedStatement.setString(1, pokemon.getName());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            
+            ArrayList<Move> moves = new ArrayList<>();
+            
+            while(resultSet.next())
+            {
+                String name = resultSet.getString("name");
+                int power = resultSet.getInt("power");
+                double accuracy = resultSet.getDouble("accuracy");
+                moves.add(new Move(name, power, accuracy));
+            }
+            pokemon.setMoves(moves);
+            
+            resultSet.close();    
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }        
+    }
+    
+    
     // Get method to return a list of all trainers 
     public static List<Trainer> getAllTrainers()
     {
         List<Trainer> trainers = new ArrayList<>();
         
-        try (Connection connection = getConnection())
+        try
         {
             String sql = "SELECT * FROM Trainers";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -533,7 +570,7 @@ public class DatabaseManager
                     data[1],
                     Integer.parseInt(data[2]),
                     Integer.parseInt(data[3]), 
-                    getPokemon(data[4]),
+                    getPokemon(connection, data[4]),
                     data[5]
                 ));
             }
@@ -549,26 +586,30 @@ public class DatabaseManager
     public static Trainer getTrainer(String username) 
     {
         Trainer trainer = null;
-        String sql = "SELECT username, name, challengeMessage, score FROM Trainers WHERE username = ?";
+        String sql = "SELECT username, name, challengeMessage, score, level, starterPokemon, challengeMessage FROM Trainers WHERE username = ?";
 
-        try (Connection conn = getConnection();
-            PreparedStatement preparedStatement = conn.prepareStatement(sql)) 
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) 
         {
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) 
             {
+                Pokemon starter = getPokemon(connection, resultSet.getString("starterPokemon"));
+                
                 trainer = new Trainer
                 (
                     resultSet.getString("username"),
                     resultSet.getString("name"),
                     resultSet.getInt("score"),
                     resultSet.getInt("level"),
-                    getPokemon(resultSet.getString("starterPokemon")),
+                    starter,
                     resultSet.getString("challengeMessage")
                 );
             }   
+            resultSet.close();
+            preparedStatement.close();
+                    
         } catch (SQLException e) 
         {
             System.out.println("Professor Oak: Could not fetch trainer! " + e.getMessage());
@@ -578,9 +619,9 @@ public class DatabaseManager
     }
     
     // Get method to return a pokemon whose name matches the query 
-    public static Pokemon getPokemon(String pokemonName) 
+    public static Pokemon getPokemon(Connection connection, String pokemonName) 
     {
-        try (Connection connection = getConnection()) 
+        try
         {
             String sql = "SELECT * FROM Pokemon WHERE name = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -589,13 +630,16 @@ public class DatabaseManager
 
             if (resultSet.next()) 
             {
-                return new Pokemon
+                Pokemon pokemon = new Pokemon
                 (
                     resultSet.getString("name"),
                     new Type(resultSet.getString("type")),
                     resultSet.getInt("HP"),
                     new ArrayList<>()
                 );
+                
+                loadPokemonMoves(connection, pokemon);
+                return pokemon;
             }
         } catch (SQLException e) 
         {
@@ -619,4 +663,91 @@ public class DatabaseManager
             }
         }
     }
+    
+    // Load types with effectiveness (strongAgainst and weakAgainst)
+    public static ArrayList<Type> loadTypesWithEffectiveness(Connection connection) throws SQLException
+    {
+        // Create an array list to store type objects 
+        ArrayList<Type> types = new ArrayList<>();
+
+        try
+        {
+            // Query all type names from the types table 
+            String sql = "SELECT typeName FROM Types";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            
+            // While the result set has another item 
+            while (resultSet.next())
+            {
+                // Add the type name to the types array as a pokemon type
+                types.add(new Type(resultSet.getString("typeName")));
+            }
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        
+        // Link the strongAgainst types 
+        try
+        {
+            // Query the type name of all strongAgainst types in the strengths table
+            String sql = "SELECT typeName, strongAgainst FROM Strengths";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            
+            while (resultSet.next())
+            {
+                Type type = findType(types, resultSet.getString("typeName"));
+                Type strongAgainst = findType(types, resultSet.getString("strongAgainst"));
+                
+                if (type != null && strongAgainst != null)
+                {
+                    type.setStrongAgainst(strongAgainst);
+                }
+            }
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        
+        // Link the weakAgainst types 
+        try
+        {
+            // Query the type name of all weakAgainst types in the weaknesses table
+            String sql = "SELECT typeName, weakAgainst FROM Weaknesses";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            
+            while (resultSet.next())
+            {
+                Type type = findType(types, resultSet.getString("typeName"));
+                Type weakAgainst = findType(types, resultSet.getString("weakAgainst"));
+                
+                if (type != null && weakAgainst != null)
+                {
+                    type.setWeakAgainst(weakAgainst);
+                }
+            }
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        
+        return types;
+    }
+    
+    // Check if type name is found in the list of types 
+    private static Type findType(List<Type> types, String name) 
+    {
+        for (Type type : types) 
+        {
+            if (type.getName().equals(name)) 
+                
+            return type;
+        }
+        
+        return null;
+    }
+
 }

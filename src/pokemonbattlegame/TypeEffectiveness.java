@@ -12,9 +12,9 @@ public class TypeEffectiveness
 {
     public static boolean isSuperEffective(pokemonbattlegame.Type attackType, pokemonbattlegame.Type defenderType)
     {
-        for (String strongType : attackType.getStrongAgainst())
+        for (Type strongType : attackType.getStrongAgainst())
         {
-            if (strongType.equalsIgnoreCase(defenderType.getName()))
+            if (strongType.getName().equalsIgnoreCase(defenderType.getName()))
             {
                 return true;
             }
@@ -24,9 +24,9 @@ public class TypeEffectiveness
     
     public static boolean isNotVeryEffective(pokemonbattlegame.Type attackType, pokemonbattlegame.Type defenderType)
     {
-        for (String weakType : attackType.getWeakAgainst())
+        for (Type weakType : attackType.getWeakAgainst())
         {
-            if (weakType.equalsIgnoreCase(defenderType.getName()))
+            if (weakType.getName().equalsIgnoreCase(defenderType.getName()))
             {
                 return true;
             }

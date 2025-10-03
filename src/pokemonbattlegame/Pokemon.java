@@ -64,4 +64,9 @@ public class Pokemon
     {
         return moves;
     }
+    
+    public void setMoves(ArrayList<Move> moves) 
+    {
+        this.moves = moves;
+    }
 }
