@@ -22,12 +22,12 @@ public class PokemonBattleGame
         // Initalise the PokemonBattleGame database 
         DatabaseManager.createTables();
         DatabaseManager.populateTypesTable();
+        DatabaseManager.populatePokemonTable(DatabaseManager.getPokemonList());
         DatabaseManager.populateWeaknesses();
         DatabaseManager.populateStrengths();
-        DatabaseManager.populatePokemonTable(DatabaseManager.getPokemonList());
-        DatabaseManager.populateTrainers();
         DatabaseManager.populateMoves();
-    
+        DatabaseManager.populateTrainers();
+        
         // Show the professor Oaks intro JFrame 
         GameSetup oaksIntro = new GameSetup();
         oaksIntro.setVisible(true);

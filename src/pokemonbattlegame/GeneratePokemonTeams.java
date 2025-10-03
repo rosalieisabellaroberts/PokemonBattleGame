@@ -5,6 +5,7 @@
 package pokemonbattlegame;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -13,18 +14,28 @@ import java.util.Random;
  */
 public class GeneratePokemonTeams 
 {
-    private Pokemon[] pokemons;
-    private Pokemon trainerCurrentPokemon; 
-    private Pokemon opponentCurrentPokemon;
+    private static Pokemon[] pokemons;
+    private static Pokemon trainerCurrentPokemon; 
+    private static Pokemon opponentCurrentPokemon;
     
-    public void generatePokemonTeams(Trainer trainer, Trainer opponent)
+    public static void generatePokemonTeams(Trainer trainer, Trainer opponent)
     {
-        
         // Create an array list to new pokemon team for the user
         ArrayList<Pokemon> trainerTeam = trainer.getTeam();
         
+        if (trainerTeam == null)
+        {
+            trainerTeam = new ArrayList<>();
+            trainer.setTeam(trainerTeam);
+        }
+        
         // Create an array list to new pokemon team for the opponent
         ArrayList<Pokemon> opponentTeam = opponent.getTeam();
+        if (opponentTeam == null)
+        {
+            opponentTeam = new ArrayList<>();
+            opponent.setTeam(opponentTeam);
+        }
         
         // Create a new random object
         Random number = new Random();

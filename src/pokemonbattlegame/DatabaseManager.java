@@ -36,6 +36,14 @@ public class DatabaseManager
         try (Connection connection = getConnection();
             Statement statement = connection.createStatement())
         {
+            
+            dropTableIfExists(statement, "Moves");
+            dropTableIfExists(statement, "Trainers");
+            dropTableIfExists(statement, "Weaknesses");
+            dropTableIfExists(statement, "Strengths");
+            dropTableIfExists(statement, "Pokemon");
+            dropTableIfExists(statement, "Types");
+
             // Create table for types 
             statement.executeUpdate("CREATE TABLE Types(" +
                     "typeName VARCHAR(50) PRIMARY KEY)");
@@ -54,18 +62,18 @@ public class DatabaseManager
                     "name VARCHAR(50)," +
                     "score INT," +
                     "level INT," +
-                    "challengeMessage VARCHAR(255)," +
                     "starterPokemon VARCHAR(50)," +
+                    "challengeMessage VARCHAR(255)," +
                     "FOREIGN KEY (starterPokemon) REFERENCES Pokemon(name))");
    
             // Create table for moves
             statement.executeUpdate("CREATE TABLE Moves (" +
-                    "id INT GENERATED ALWAYS IDENTITY PRIMARY KEY," +
+                    "id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY," +
                     "pokemonName VARCHAR(50)," +
                     "name VARCHAR(50)," +
                     "power DOUBLE," +
                     "accuracy DOUBLE," +
-                    "FOREIGN KEY (pokemonName) REFERENCES Pokemon(name)");
+                    "FOREIGN KEY (pokemonName) REFERENCES Pokemon(name))");
             
             // Create table for weaknesses
             statement.executeUpdate("CREATE TABLE Weaknesses(" +
@@ -259,7 +267,7 @@ public class DatabaseManager
             {"Grass", "Water"},
             {"Fire", "Grass"},
             {"Water", "Fire"},
-            {"Electic", "Water"},
+            {"Electric", "Water"},
             {"Psychic", "Fighting"},
             {"Bug", "Grass"},
             {"Rock", "Fire"},
@@ -468,7 +476,7 @@ public class DatabaseManager
 
         try (Connection connection = getConnection()) 
         {
-            String sql = "INSERT INTO Moves (pokemonName, moveName, power, accuracy) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO Moves (pokemonName, name, power, accuracy) VALUES (?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             for (String[] move : moves) 
@@ -502,17 +510,32 @@ public class DatabaseManager
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             
+            // Store trainer data in a temporary list
+            List<String[]> temporaryTrainers = new ArrayList<>();
+            
             while (resultSet.next())
             {
-                Trainer trainer = new Trainer (
+                temporaryTrainers.add(new String[]
+                {
                     resultSet.getString("username"),
                     resultSet.getString("name"),
-                    resultSet.getInt("score"),
-                    resultSet.getInt("level"),
-                    getPokemon(resultSet.getString("starterPokemon")),
+                    String.valueOf(resultSet.getInt("score")),
+                    String.valueOf(resultSet.getInt("level")),
+                    resultSet.getString("starterPokemon"),
                     resultSet.getString("challengeMessage")
-                );
-                trainers.add(trainer);   
+                });
+            }
+            // Safely create trainer objects with result set closed 
+            for (String[] data : temporaryTrainers)
+            {
+                trainers.add(new Trainer(
+                    data[0],
+                    data[1],
+                    Integer.parseInt(data[2]),
+                    Integer.parseInt(data[3]), 
+                    getPokemon(data[4]),
+                    data[5]
+                ));
             }
         } catch (SQLException e)
         {
@@ -540,9 +563,11 @@ public class DatabaseManager
                 (
                     resultSet.getString("username"),
                     resultSet.getString("name"),
+                    resultSet.getInt("score"),
+                    resultSet.getInt("level"),
+                    getPokemon(resultSet.getString("starterPokemon")),
                     resultSet.getString("challengeMessage")
                 );
-                trainer.setScore(resultSet.getInt("score")); 
             }   
         } catch (SQLException e) 
         {
@@ -578,4 +603,20 @@ public class DatabaseManager
         }
         return null;
     }   
+    
+    // Drop tables that exist already and re-create
+    private static void dropTableIfExists(Statement statement, String tableName)
+    {
+        try
+        {
+            statement.executeUpdate("DROP TABLE " + tableName);
+        } catch (SQLException e)
+        {
+            // If the table does not exist, it is safe to ignore 
+            if (!"42Y55".equals(e.getSQLState()))
+            {
+                e.printStackTrace();
+            }
+        }
+    }
 }

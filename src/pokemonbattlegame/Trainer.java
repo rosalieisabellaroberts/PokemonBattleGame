@@ -94,4 +94,9 @@ public class Trainer
     {
         this.score = score;
     }
+    
+    public void setTeam(ArrayList<Pokemon> team) 
+    {
+        this.team = team;
+    }
 }
