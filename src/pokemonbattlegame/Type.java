@@ -15,9 +15,9 @@ public class Type
     private List<String> weakAgainst;
     private List<String> strongAgainst;
     
-    public Type()
+    public Type(String name)
     {
-       
+       this.name = name;
     }
     
     public String getName()

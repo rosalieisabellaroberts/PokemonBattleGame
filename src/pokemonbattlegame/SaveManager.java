@@ -9,83 +9,75 @@ package pokemonbattlegame;
  * @author dilro
  */
 
-import com.google.gson.Gson;
-import java.io.*;
-import java.util.*;
+import java.sql.*;
 
 public class SaveManager 
 {
     public static void saveTrainer(Trainer trainer) 
     {
-        try 
+        // Check if trainer username exists
+        if (trainer.getUsername() == null || trainer.getUsername().isEmpty()) 
         {
-            // Check if trainer username exists
-            if (trainer.getUsername() == null || trainer.getUsername().isEmpty()) 
-            {
-                System.out.println("Professor Oak: Your username is missing! I won't save your data then...");
-                return;
-            }
-            
-            Gson gson = new Gson();
-            File file = new File("Trainers.json");
-            
-            if (!file.exists())
-            {
-                file.createNewFile();
-                
-                try (FileWriter writer = new FileWriter(file))
-                {
-                    // Create an empty JSON array
-                    writer.write("[]");
-                }
-            }  
-
-            // Have Gson convert from JSON to correct type (using TypeToken helper class to deserialise into a List of Trainer objects)
-            java.lang.reflect.Type listType = new com.google.gson.reflect.TypeToken<java.util.List<Trainer>>() {}.getType();
-            java.util.List<Trainer> trainersList = new ArrayList<>();
-
-            try (FileReader reader = new FileReader(file)) 
-            {
-                java.util.List<Trainer> fromFile = gson.fromJson(reader, listType);
-                
-                // If file is corrupt or empty, return message
-                if (fromFile == null) 
-                {
-                    System.out.println("Professor Oak: My pidgey must have corrupted Trainers.json! Or maybe it's just empty? We will have to start over...");
-                } else 
-                {
-                    trainersList = fromFile;
-                }
-            }
-            
-            boolean exists = false;
-
-            // Check if trainer already exists
-            for (int i = 0; i < trainersList.size(); i++)
-            {
-                if (trainersList.get(i).getUsername().equals(trainer.getUsername()))
-                {
-                    // Update existing trainer
-                    trainersList.set(i, trainer);
-                    exists = true;
-                    break;
-                }
-            }
-            
-            // Append new trainer if they do not already exist
-            if (!exists)
-            {
-                trainersList.add(trainer);
-            }
-            
-            try (FileWriter writer = new FileWriter(file, false)) 
-            {
-                gson.toJson(trainersList, writer);
-                writer.flush();
-            }
-        } catch (Exception e) 
+            System.out.println("Professor Oak: Your username is missing! I won't save your data then...");
+            return;
+        }
+        
+        try (Connection connection = DatabaseManager.getConnection())
         {
-            System.out.println("Professor Oak: I couldn't update save file: " + e.getMessage());
+            // Check if trainer already exists in the database 
+            String checkSql = "SELECT username FROM Trainers WHERE username = ?";
+            
+            try (PreparedStatement checkPreparedStatement = connection.prepareStatement(checkSql))
+            {
+                checkPreparedStatement.setString(1, trainer.getUsername());
+                ResultSet resultSet = checkPreparedStatement.executeQuery();
+                
+                if (resultSet.next())
+                {
+                    // Trainer exists and must be updated in the trainer table 
+                    String updateSql = "UPDATE Trainers SET name = ?, score = ?, level = ?, starterPokemon = ?, challengeMessage = ? WHERE username = ?";
+                    
+                    try (PreparedStatement updatePreparedStatement = connection.prepareStatement(updateSql))
+                    {
+                        updatePreparedStatement.setString(1, trainer.getName());
+                        updatePreparedStatement.setInt(2, trainer.getScore());
+                        updatePreparedStatement.setInt(3, trainer.getLevel());
+                        updatePreparedStatement.setString(4, trainer.getStarterPokemon().getName());
+                        updatePreparedStatement.setString(5, trainer.getChallengeMessage());
+                        updatePreparedStatement.setString(6, trainer.getUsername());
+                        
+                        updatePreparedStatement.executeUpdate();
+                    } catch (SQLException e)
+                    {
+                        e.printStackTrace();
+                    }
+                } else
+                {
+                    // Trainer does not exist and must be inserted into the trainer table
+                    String insertSql = "INSERT INTO Trainers (username, name, score, level, starterPokemon, challengeMessage) VALUES (?, ?, ?, ?, ?, ?)";
+                
+                    try (PreparedStatement insertPreparedStatement = connection.prepareStatement(insertSql))
+                    {
+                        insertPreparedStatement.setString(1, trainer.getUsername());
+                        insertPreparedStatement.setString(2, trainer.getName());
+                        insertPreparedStatement.setInt(3, trainer.getScore());
+                        insertPreparedStatement.setInt(4, trainer.getLevel());
+                        insertPreparedStatement.setString(5, trainer.getStarterPokemon().getName());
+                        insertPreparedStatement.setString(6, trainer.getChallengeMessage());
+                        
+                        insertPreparedStatement.executeUpdate();
+                    } catch (SQLException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (SQLException e)
+            {
+                e.printStackTrace();
+            }
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
         }
     }
 }

@@ -20,6 +20,16 @@ public class Trainer
     private String challengeMessage;
     private ArrayList<Pokemon> team;
     
+    public Trainer (String username, String name, int score, int level, Pokemon starterPokemon, String challengeMessage)
+    {
+        this.username = username;
+        this.name = name;
+        this.score = score;
+        this.level = level;
+        this.starterPokemon = starterPokemon;
+        this.challengeMessage = challengeMessage;
+    }
+    
     public Trainer(String username, String name, String challengeMessage)
     {
         this.username = username;

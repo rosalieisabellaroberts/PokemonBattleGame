@@ -4,12 +4,6 @@
  */
 package pokemonbattlegame;
 
-import java.io.*;
-import java.util.*;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
-
 /**
  *
  * @author dilro
@@ -24,6 +18,16 @@ public class PokemonBattleGame
     
     public static void main(String[] args) throws InterruptedException
     {
+        
+        // Initalise the PokemonBattleGame database 
+        DatabaseManager.createTables();
+        DatabaseManager.populateTypesTable();
+        DatabaseManager.populateWeaknesses();
+        DatabaseManager.populateStrengths();
+        DatabaseManager.populatePokemonTable(DatabaseManager.getPokemonList());
+        DatabaseManager.populateTrainers();
+        DatabaseManager.populateMoves();
+    
         // Show the professor Oaks intro JFrame 
         GameSetup oaksIntro = new GameSetup();
         oaksIntro.setVisible(true);

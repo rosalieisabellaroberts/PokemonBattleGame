@@ -4,135 +4,74 @@
  */
 package pokemonbattlegame;
 
-import com.google.gson.Gson;
-import java.io.*;
 import java.util.*;
 
 /**
  *
  * @author dilro
  */
-    public class SetupGame
+public class SetupGame
+{
+    private Pokemon[] pokemons;
+    private Trainer trainer;
+
+    public Trainer run() 
     {
-        private Pokemon[] pokemons;
-        private Trainer trainer;
+        Scanner scanner = new Scanner(System.in);
 
-        public Trainer run() 
+        System.out.println("Professor Oak: Hello there! Welcome to the world of Pokemon! "
+                + "My name is Oak! People call me the Pokemon Prof! This world "
+                + "is inhabited by creatures called Pokemon! For some people, "
+                + "Pokemon are pets. Others use them for fights. Myself... I study "
+                + "Pokemon as a profession.");
+        System.out.println("Professor Oak: What is your username, Trainer? ");
+
+        String username = scanner.nextLine().trim();
+
+        // Try to load the trainer from the database 
+        this.trainer = DatabaseManager.getTrainer(username);
+
+        // Load list of Pokemon objects from the database 
+        List<Pokemon> pokemonList = DatabaseManager.getPokemonList();
+            
+        // If the list is empty, return an error message 
+        if(pokemonList.isEmpty())
         {
-            Scanner scanner = new Scanner(System.in);
-
-            System.out.println("Professor Oak: Hello there! Welcome to the world of Pokemon! "
-                    + "My name is Oak! People call me the Pokemon Prof! This world "
-                    + "is inhabited by creatures called Pokemon! For some people, "
-                    + "Pokemon are pets. Others use them for fights. Myself... I study "
-                    + "Pokemon as a profession.");
-            System.out.println("Professor Oak: What is your username, Trainer? ");
-
-            String username = scanner.nextLine().trim();
-
-            Trainer[] trainers = new Trainer[0];
-            File trainersFile = new File("Trainers.json");
-
+            System.out.println("Professor Oak: I couldn't find any pokemon in this Pokedex!");
+            wait(2);
+        }
+        // Populate the pokemons array with the values from the database pokemon list 
+        this.pokemons = pokemonList.toArray(new Pokemon[0]);
+            
+        // If trainer exists 
+        if (this.trainer != null) 
+        {
+            // Print welcome message 
+            System.out.println("Professor Oak: Welcome back " + trainer.getName() + "! Your score is: " + trainer.getScore());
+        }
+        
+        // If trainer doesn't exist, create a new one 
+        else
+        {
             try 
             {
-                if (trainersFile.exists()) 
-                {
-                    try (BufferedReader trainersReader = new BufferedReader(new FileReader(trainersFile))) 
-                    {
-                        trainers = new Gson().fromJson(trainersReader, Trainer[].class);
-                        if (trainers == null) 
-                        {
-                            trainers = new Trainer[0]; // if file is empty
-                        }
-                    }
-                } else 
-                {
-                    // Create empty Trainers.json if not found
-                    trainersFile.createNewFile();
-                    try (FileWriter writer = new FileWriter(trainersFile)) 
-                    {
-                        writer.write("[]"); // start with empty array
-                    }
-                }
-            } catch (IOException e) 
+                createNewTrainer(username, scanner);
+                   
+                // Save new trainer into the database
+                SaveManager.saveTrainer(this.trainer);
+                   
+            } catch (Exception e)
             {
-                System.out.println("Professor Oak: Oooops... couldn't load trainers: " + e.getMessage());
-            }           
-
-            // Load Pokémon
-            boolean loadedPokemon = false;
-
-            // Try loading from working directory first
-            File pokemonFile = new File("Pokemon.json");
-            if (pokemonFile.exists()) 
-            {
-                try (BufferedReader pokemonReader = new BufferedReader(new FileReader(pokemonFile))) 
-                {
-                    this.pokemons = new Gson().fromJson(pokemonReader, Pokemon[].class);
-                    loadedPokemon = true;
-                }
-                catch (IOException e)
-                {
-                    System.out.println("Professor Oak: Oooops... couldn't load Pokémon file: " + e.getMessage());
-                }
-            }
-
-            // If not found in working directory, try loading as resource
-            if (!loadedPokemon) 
-            {
-                InputStream pokemonStream = getClass().getResourceAsStream("/pokemonbattlegame/Pokemon.json");
-                if (pokemonStream != null) 
-                {
-                    try (BufferedReader pokemonReader = new BufferedReader(new InputStreamReader(pokemonStream))) 
-                    {
-                        this.pokemons = new Gson().fromJson(pokemonReader, Pokemon[].class);
-                        loadedPokemon = true;
-                    }
-                    catch (IOException e)
-                    {
-                    System.out.println("Professor Oak: Oooops... couldn't load Pokémon file: " + e.getMessage());
-                    }
-                }
-            }
-
-            // If still not loaded, return error message
-            if (!loadedPokemon) 
-            {
-                System.out.println("Professor Oak: No Pokémon file found!");
-                wait(2);
-            }
-           
-            GeneratePokemonTeams teamGenerator = new GeneratePokemonTeams();
-            teamGenerator.setPokemons(this.pokemons);
-            
-            boolean found = false;
-
-            for (Trainer t : trainers) 
-            {
-                if (t.getUsername().equals(username)) 
-                {
-                    found = true;
-                    this.trainer = t;
-                    System.out.println("Professor Oak: Welcome back " + t.getName() + "! Your score is: " + t.getScore());
-                    break;
-                }
-            }
-
-            if (!found) 
-            {
-                try 
-                {
-                    createNewTrainer(username, scanner);
-                }
-                catch (IOException e) 
-                {
-                    System.out.println("Professor Oak: Oooops..." + e.getMessage());
-                }
-            }
-            return this.trainer;
+                System.out.println("Professor Oak: Oooops..." + e.getMessage());
+                e.printStackTrace();
+            }       
+        }  
+        
+        return this.trainer;
+        
     }
 
-    private void createNewTrainer(String username, Scanner scanner) throws IOException 
+    private void createNewTrainer(String username, Scanner scanner)
     {
         System.out.println("Professor Oak: You must be new around here! What is your name?");
         String name = scanner.nextLine().trim();
@@ -227,11 +166,12 @@ import java.util.*;
                     continue;
                 }
 
-                for (Pokemon p : pokemons) 
+                // Find chosen pokemon from database loaded list 
+                for (Pokemon pokemon : pokemons) 
                 {
-                    if (p.getName().equals(chosenPokemon)) 
+                    if (pokemon.getName().equals(chosenPokemon)) 
                     {
-                        this.trainer.setStarterPokemon(p);
+                        this.trainer.setStarterPokemon(pokemon);
                         break;
                     }
                 }
