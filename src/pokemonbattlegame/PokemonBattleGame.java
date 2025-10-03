@@ -22,32 +22,33 @@ public class PokemonBattleGame
     private Pokemon opponentCurrentPokemon;
     private Pokemon[] pokemons;
     
-    PokemonBattleGame()
-    {
-        
-    }
-    
     public static void main(String[] args) throws InterruptedException
     {
         // Show the professor Oaks intro JFrame 
-        java.awt.EventQueue.invokeLater(new Runnable() 
-        {
-            public void run() 
-            {
-                GameSetup oaksIntro = new GameSetup();
-                oaksIntro.setVisible(true);
-            }
-        });
+        GameSetup oaksIntro = new GameSetup();
+        oaksIntro.setVisible(true);
         
         // Create a new game
         PokemonBattleGame game = new PokemonBattleGame();
       
         // Setup the game
-        new SetupGame(game);
+        SetupGame setup = new SetupGame();
+        Trainer trainer = setup.run();
+
+        // If trainer creation fails, stop program
+        if (trainer == null) 
+        {
+            System.out.println("Professor Oak: Looks like you are not fit to be a trainer just yet ...");
+            return;
+        }
+
+        game.setTrainer(trainer);
+        SaveManager.saveTrainer(trainer);
+        game.setPokemons(setup.getPokemons());
         
         // Prompt user for start 
-        game.startBattle();
-            
+        BattleManager battleManager = new BattleManager(game);
+        
         // Randomly generate an opponent
         try 
         {
@@ -56,48 +57,15 @@ public class PokemonBattleGame
             game.setOpponent(generatedOpponent.getOpponent());
         } catch (InterruptedException e)
         {
-            System.out.println("Error generating opponent!" + e.getMessage());
+            System.out.println("Professor Oak: Looks like there are no trainers to battle! Try again later..." + e.getMessage());
         }
-            
-        // Randomly generate an opponent
+        
+        // Randomly generate pokemon teams
         GeneratePokemonTeams generatedPokemonTeams = new GeneratePokemonTeams();
+        generatedPokemonTeams.setPokemons(setup.getPokemons());
         generatedPokemonTeams.generatePokemonTeams(game.getTrainer(), game.getOpponent());
-
-        // Display game details 
-        DisplayGameDetails gameDetails = new DisplayGameDetails();
-        gameDetails.displayGameDetails(game.getTrainer(), game.getOpponent());
-        
-        // Enter battle loop 
-        game.startBattle();
-        
-    }
-   
-    public void startBattle() throws InterruptedException 
-    {
-        System.out.println("Professor Oaks: It is now time for you and " + this.trainer.getStarterPokemon().getName() +
-                " to journey into the magical world of Pokemon!\n");
-        Thread.sleep(2000);
-        System.out.println("When you are ready, press any key to start...");
-
-        Scanner scanner = new Scanner(System.in);
-        scanner.nextLine();
-
-        // Generate opponent
-        GenerateOpponent generatedOpponent = new GenerateOpponent();
-        generatedOpponent.generateOpponent(this.getTrainer());
-        this.setOpponent(generatedOpponent.getOpponent());
-
-        // Generate Pokemon teams
-        GeneratePokemonTeams generatedPokemonTeams = new GeneratePokemonTeams();
-        generatedPokemonTeams.generatePokemonTeams(getTrainer(), getOpponent());
-
-        // Display game details
-        DisplayGameDetails gameDetails = new DisplayGameDetails();
-        gameDetails.displayGameDetails(this.getTrainer(), this.getOpponent());
-
-        // Start battle
-        Battle battle = new Battle(trainer, opponent, trainer.getStarterPokemon(), opponent.getStarterPokemon());
-        battle.runBattle();
+       
+        battleManager.startBattle();  
     }
 
     public void setTrainer(Trainer trainer) 
@@ -120,27 +88,13 @@ public class PokemonBattleGame
         this.opponent = opponent;
     }
     
-    // Setter method for pokemons
+    public Pokemon[] getPokemons() 
+    {
+        return pokemons;
+    }
+
     public void setPokemons(Pokemon[] pokemons) 
     {
         this.pokemons = pokemons;
-    }
-
-    //score for evolution stage 1,2(>=500),3(>=1000)
-    private int stageFromScore(int score)
-    {
-        if(score >= 1000) return 3;
-        if(score >= 500) return 2;
-        return 1;
-    }
-    
-    private void playEvolutionSequence(Pokemon mon, int targetStage) throws InterruptedException
-    {
-        System.out.println("What? " + mon.getName() + " is evolving!");
-        Thread.sleep(900);
-        System.out.print("."); Thread.sleep(600);
-        System.out.print("."); Thread.sleep(600);
-        System.out.println("."); Thread.sleep(600);
-        System.out.println("Congratulations! Your " + mon.getName() + " evolved to Stage " + targetStage + "!");
     }
 }

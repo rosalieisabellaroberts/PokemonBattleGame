@@ -22,7 +22,7 @@ public class GameSetup extends javax.swing.JFrame {
     {
         initComponents();
         // Set image icon of professor oak
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/oak.png")));
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/oak.png")));
         
         // Create an action listener object
         ActionListener listener = new ActionListener()

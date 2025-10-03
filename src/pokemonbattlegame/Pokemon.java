@@ -17,12 +17,12 @@ public class Pokemon
     private int originalHP;
     private ArrayList<Move> moves;
     
-    public Pokemon(String name, Type type, int HP, int originalHP, ArrayList<Move> moves)
+    public Pokemon(String name, Type type, int HP, ArrayList<Move> moves)
     {
        this.name = name;
        this.type = type;
        this.HP = HP;
-       this.originalHP = originalHP;
+       this.originalHP = HP;
        this.moves = moves;
     }
     

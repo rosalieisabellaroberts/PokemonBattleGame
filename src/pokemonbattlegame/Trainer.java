@@ -25,7 +25,6 @@ public class Trainer
         this.username = username;
         this.name = name;
         this.level = 1;
-        this.starterPokemon = starterPokemon;
         this.score = 0;
         this.challengeMessage = challengeMessage;
         this.team = new ArrayList<>();

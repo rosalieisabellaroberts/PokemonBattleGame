@@ -1,266 +1,113 @@
 [
   {
+    "username": "samuel11roberts",
+    "name": "Samuel",
+    "starterPokemon": {
+      "name": "Charmander",
+      "type": {
+        "name": "Fire",
+        "weakAgainst": ["Ground","Rock","Water"],
+        "strongAgainst": ["Bug","Steel","Grass","Ice","Fairy"]
+      },
+      "HP": 150,
+      "originalHP": 150,
+      "moves": [
+        {"name": "Ember","power":45.0,"accuracy":70.0},
+        {"name": "Flamethrower","power":50.0,"accuracy":74.0},
+        {"name": "Flame Charge","power":55.0,"accuracy":78.0}
+      ]
+    },
+    "score": 100,
+    "level": 1,
+    "challengeMessage": "It’s time to get out of the frying pan and into the fire!",
+    "team": []
+  },
+  {
     "username": "ketchup",
     "name": "Ash",
-    "score": 0,
-    "level": 1,
     "starterPokemon": {
       "name": "Pikachu",
       "type": {
         "name": "Electric",
         "weakAgainst": ["Ground"],
-        "strongAgainst": ["Flying", "Steel"]
-      },
-      "HP": 500,
-      "moves": [
-        {"name": "Thunder", "power": 90, "accuracy": 78.0},
-        {"name": "Discharge", "power": 95, "accuracy": 82.0},
-        {"name": "Wild Charge", "power": 100, "accuracy": 86.0}
-      ]
-    },
-    "challengeMessage": "Pikachu, I choose you!",
-    "team": []
-  },
-  {
-    "username": "smash",
-    "name": "Gary",
-    "score": 100,
-    "level": 2,
-    "starterPokemon": {
-      "name": "Squirtle",
-      "type": {
-        "name": "Water",
-        "weakAgainst": ["Grass", "Electric"],
-        "strongAgainst": ["Steel", "Fire", "Water", "Ice"]
+        "strongAgainst": ["Flying","Steel"]
       },
       "HP": 150,
+      "originalHP": 150,
       "moves": [
-        {"name": "Bubble", "power": 45, "accuracy": 70.0},
-        {"name": "Aqua Tail", "power": 50, "accuracy": 74.0},
-        {"name": "Tackle", "power": 55, "accuracy": 78.0}
+        {"name": "Thunder Shock","power":45.0,"accuracy":70.0},
+        {"name": "Quick Attack","power":40.0,"accuracy":100.0},
+        {"name": "Thunderbolt","power":90.0,"accuracy":95.0}
       ]
     },
-    "challengeMessage": "Get ready, rookie! You're going down!",
-    "team": []
-  },
-  {
-    "username": "joey",
-    "name": "Joey",
-    "score": 50,
+    "score": 0,
     "level": 1,
-    "starterPokemon": {
-      "name": "Charmander",
-      "type": {
-        "name": "Fire",
-        "weakAgainst": ["Ground", "Rock", "Water"],
-        "strongAgainst": ["Bug", "Steel", "Grass", "Ice", "Fairy"]
-      },
-      "HP": 150,
-      "moves": [
-        {"name": "Ember", "power": 45, "accuracy": 70.0},
-        {"name": "Flamethrower", "power": 50, "accuracy": 74.0},
-        {"name": "Flame Charge", "power": 55, "accuracy": 78.0}
-      ]
-    },
-    "challengeMessage": "I'll crush you in no time!",
-    "team": []
+    "challengeMessage": "I’m ready for a battle!"
   },
   {
-    "username": "wave",
+    "username": "misty123",
     "name": "Misty",
-    "score": 70,
-    "level": 1,
     "starterPokemon": {
-      "name": "Staryu",
+      "name": "Starmie",
       "type": {
-        "name": "Water",
-        "weakAgainst": ["Electric", "Grass"],
-        "strongAgainst": ["Fire", "Rock"]
+        "name": "Water/Psychic",
+        "weakAgainst": ["Electric","Grass","Bug","Ghost","Dark"],
+        "strongAgainst": ["Fire","Ground","Rock","Fighting"]
       },
-      "HP": 300,
+      "HP": 140,
+      "originalHP": 140,
       "moves": [
-        {"name": "Water Gun", "power": 40, "accuracy": 100.0},
-        {"name": "Tackle", "power": 40, "accuracy": 100.0},
-        {"name": "Swift", "power": 60, "accuracy": 100.0}
+        {"name": "Water Gun","power":40.0,"accuracy":100.0},
+        {"name": "Psybeam","power":65.0,"accuracy":100.0},
+        {"name": "Bubble Beam","power":65.0,"accuracy":100.0}
       ]
     },
-    "challengeMessage": "Don't underestimate the power of water!",
-    "team": []
+    "score": 50,
+    "level": 2,
+    "challengeMessage": "Let’s make a splash!"
   },
   {
-    "username": "rocky",
+    "username": "brock77",
     "name": "Brock",
-    "score": 80,
-    "level": 1,
     "starterPokemon": {
       "name": "Onix",
       "type": {
         "name": "Rock/Ground",
-        "weakAgainst": ["Water", "Grass", "Fighting", "Ground", "Steel"],
-        "strongAgainst": ["Fire", "Electric", "Poison", "Flying"]
-      },
-      "HP": 350,
-      "moves": [
-        {"name": "Rock Throw", "power": 50, "accuracy": 90.0},
-        {"name": "Tackle", "power": 40, "accuracy": 100.0},
-        {"name": "Harden", "power": 0, "accuracy": 100.0}
-      ]
-    },
-    "challengeMessage": "Rock solid strategy, coming right up!",
-    "team": []
-  },
-  {
-    "username": "lance",
-    "name": "Lance",
-    "score": 120,
-    "level": 2,
-    "starterPokemon": {
-      "name": "Dragonite",
-      "type": {
-        "name": "Dragon/Flying",
-        "weakAgainst": ["Ice", "Dragon", "Rock", "Fairy"],
-        "strongAgainst": ["Grass", "Fighting", "Bug"]
-      },
-      "HP": 910,
-      "moves": [
-        {"name": "Dragon Claw", "power": 80, "accuracy": 100.0},
-        {"name": "Wing Attack", "power": 60, "accuracy": 100.0},
-        {"name": "Hyper Beam", "power": 150, "accuracy": 90.0}
-      ]
-    },
-    "challengeMessage": "Feel the fury of a Dragon Master!",
-    "team": []
-  },
-  {
-    "username": "quack",
-    "name": "Daisy",
-    "score": 65,
-    "level": 1,
-    "starterPokemon": {
-      "name": "Psyduck",
-      "type": {
-        "name": "Water",
-        "weakAgainst": ["Electric", "Grass"],
-        "strongAgainst": ["Fire", "Rock"]
-      },
-      "HP": 350,
-      "moves": [
-        {"name": "Water Gun", "power": 50, "accuracy": 90.0},
-        {"name": "Confusion", "power": 40, "accuracy": 85.0},
-        {"name": "Tail Whip", "power": 0, "accuracy": 100.0}
-      ]
-    },
-    "challengeMessage": "Don't laugh! Psyduck's more powerful than it looks!",
-    "team": []
-  },
-  {
-    "username": "leaf",
-    "name": "May",
-    "score": 95,
-    "level": 1,
-    "starterPokemon": {
-      "name": "Torchic",
-      "type": {
-        "name": "Fire",
-        "weakAgainst": ["Water", "Rock", "Ground"],
-        "strongAgainst": ["Grass", "Bug", "Ice"]
-      },
-      "HP": 360,
-      "moves": [
-        {"name": "Ember", "power": 40, "accuracy": 100.0},
-        {"name": "Peck", "power": 35, "accuracy": 100.0},
-        {"name": "Quick Attack", "power": 40, "accuracy": 100.0}
-      ]
-    },
-    "challengeMessage": "I've trained hard-don't get in my way!",
-    "team": []
-  },
-  {
-    "username": "stone",
-    "name": "Tracy",
-    "score": 85,
-    "level": 1,
-    "starterPokemon": {
-      "name": "Geodude",
-      "type": {
-        "name": "Rock/Ground",
-        "weakAgainst": ["Water", "Grass", "Fighting", "Ground", "Steel"],
-        "strongAgainst": ["Fire", "Electric", "Poison", "Flying"]
-      },
-      "HP": 300,
-      "moves": [
-        {"name": "Tackle", "power": 40, "accuracy": 100.0},
-        {"name": "Rock Throw", "power": 50, "accuracy": 90.0},
-        {"name": "Harden", "power": 0, "accuracy": 100.0}
-      ]
-    },
-    "challengeMessage": "Prepare to be grounded!",
-    "team": []
-  },
-  {
-    "username": "bud",
-    "name": "Max",
-    "score": 40,
-    "level": 1,
-    "starterPokemon": {
-      "name": "Treecko",
-      "type": {
-        "name": "Grass",
-        "weakAgainst": ["Flying", "Poison", "Bug", "Fire", "Ice"],
-        "strongAgainst": ["Ground", "Water", "Electric"]
-      },
-      "HP": 150,
-      "moves": [
-        {"name": "Tackle", "power": 45, "accuracy": 70.0},
-        {"name": "Leaf Blade", "power": 50, "accuracy": 75.0},
-        {"name": "Quick Attack", "power": 40, "accuracy": 90.0}
-      ]
-    },
-    "challengeMessage": "I may be new, but I've got spirit!",
-    "team": []
-  },
-  {
-    "username": "spark",
-    "name": "Clemont",
-    "score": 90,
-    "level": 1,
-    "starterPokemon": {
-      "name": "Shinx",
-      "type": {
-        "name": "Electric",
-        "weakAgainst": ["Ground"],
-        "strongAgainst": ["Flying", "Steel"]
+        "weakAgainst": ["Water","Grass","Ice","Fighting","Ground","Steel"],
+        "strongAgainst": ["Fire","Electric","Poison","Flying","Rock"]
       },
       "HP": 200,
+      "originalHP": 200,
       "moves": [
-        {"name": "Spark", "power": 50, "accuracy": 90.0},
-        {"name": "Tackle", "power": 40, "accuracy": 95.0},
-        {"name": "Bite", "power": 60, "accuracy": 85.0}
+        {"name": "Rock Throw","power":50.0,"accuracy":90.0},
+        {"name": "Tackle","power":40.0,"accuracy":100.0},
+        {"name": "Earthquake","power":100.0,"accuracy":100.0}
       ]
     },
-    "challengeMessage": "Electric power will light your path!",
-    "team": []
+    "score": 75,
+    "level": 3,
+    "challengeMessage": "I’ll rock you!"
   },
   {
-    "username": "blaze",
-    "name": "Flannery",
-    "score": 110,
-    "level": 2,
+    "username": "garyoak",
+    "name": "Gary",
     "starterPokemon": {
-      "name": "Torkoal",
+      "name": "Blastoise",
       "type": {
-        "name": "Fire",
-        "weakAgainst": ["Water", "Ground", "Rock"],
-        "strongAgainst": ["Grass", "Bug", "Ice"]
+        "name": "Water",
+        "weakAgainst": ["Electric","Grass"],
+        "strongAgainst": ["Fire","Ground","Rock"]
       },
-      "HP": 450,
+      "HP": 160,
+      "originalHP": 160,
       "moves": [
-        {"name": "Flamethrower", "power": 90, "accuracy": 95.0},
-        {"name": "Smokescreen", "power": 0, "accuracy": 100.0},
-        {"name": "Shell Smash", "power": 0, "accuracy": 100.0}
+        {"name": "Water Gun","power":40.0,"accuracy":100.0},
+        {"name": "Bite","power":60.0,"accuracy":100.0},
+        {"name": "Hydro Pump","power":110.0,"accuracy":80.0}
       ]
     },
-    "challengeMessage": "Feel the heat of my Torkoal!",
-    "team": []
+    "score": 90,
+    "level": 4,
+    "challengeMessage": "You’ll need more than luck to beat me!"
   }
 ]
