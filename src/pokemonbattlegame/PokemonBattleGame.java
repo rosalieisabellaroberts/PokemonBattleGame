@@ -42,6 +42,12 @@ public class PokemonBattleGame
             DatabaseManager.populateMoves(connection);
             DatabaseManager.populateTrainers(connection);
             
+            // Load types with effectiveness 
+            ArrayList<Type> types = DatabaseManager.loadTypesWithEffectiveness(connection);
+            
+            // Store types and effectiveness 
+            TypeStorage.setTypes(types);
+            
             // Show the professor Oaks intro JFrame 
             GameSetup oaksIntro = new GameSetup();
             oaksIntro.setVisible(true);

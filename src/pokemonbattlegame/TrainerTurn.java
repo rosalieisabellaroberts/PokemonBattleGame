@@ -206,8 +206,7 @@ public class TrainerTurn
             orderNumber++;
         }
 
-        System.out.println("\nChoose a Pokémon (1-" + trainer.getTeam().size() + ") or 0 to cancel:");
-        int switchChoice = getValidInput(scanner, 0, trainer.getTeam().size(), "Choose a pokemon or enter 0 to cancel...");
+        int switchChoice = getValidInput(scanner, 0, trainer.getTeam().size(), "Choose a pokemon (1-" + trainer.getTeam().size() + "} or enter 0 to cancel...");
 
         if (switchChoice == 0) return;
 

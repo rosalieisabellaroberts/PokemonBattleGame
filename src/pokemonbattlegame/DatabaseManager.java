@@ -320,7 +320,7 @@ public class DatabaseManager
         // Check if table is already populated
         try (Statement statement = connection.createStatement())
         {
-            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM Types");
+            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM Weaknesses");
             resultSet.next();
             if (resultSet.getInt(1) > 0)
             {
@@ -415,7 +415,7 @@ public class DatabaseManager
         // Check if table is already populated
         try (Statement statement = connection.createStatement())
         {
-            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM Types");
+            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM Strengths");
             resultSet.next();
             if (resultSet.getInt(1) > 0)
             {
@@ -935,7 +935,7 @@ public class DatabaseManager
     // Load the pokemon moves 
     public static void loadPokemonMoves(Connection connection, Pokemon pokemon)
     {
-        String sql = "SELECT name, power, accuracy FROM MOVES WHERE pokemonName = ?";
+        String sql = "SELECT name, power, accuracy FROM Moves WHERE pokemonName = ?";
         
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
         {
@@ -1057,7 +1057,7 @@ public class DatabaseManager
                 Pokemon pokemon = new Pokemon
                 (
                     resultSet.getString("name"),
-                    new Type(resultSet.getString("type")),
+                    TypeStorage.getTypeByName(resultSet.getString("type")),
                     resultSet.getInt("HP"),
                     new ArrayList<>()
                 );
@@ -1105,7 +1105,8 @@ public class DatabaseManager
             while (resultSet.next())
             {
                 // Add the type name to the types array as a pokemon type
-                types.add(new Type(resultSet.getString("typeName")));
+                Type type = new Type(resultSet.getString("typeName"));
+                types.add(type);
             }
         } catch (SQLException e)
         {
@@ -1157,6 +1158,8 @@ public class DatabaseManager
         {
             e.printStackTrace();
         }
+        
+        TypeStorage.setTypes(types);
         
         return types;
     }
