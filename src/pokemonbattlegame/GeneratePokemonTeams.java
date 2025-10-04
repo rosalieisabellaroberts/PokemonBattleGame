@@ -7,6 +7,7 @@ package pokemonbattlegame;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.sql.*;
 
 /**
  *
@@ -18,8 +19,12 @@ public class GeneratePokemonTeams
     private static Pokemon trainerCurrentPokemon; 
     private static Pokemon opponentCurrentPokemon;
     
-    public static void generatePokemonTeams(Trainer trainer, Trainer opponent)
+    public static void generatePokemonTeams(Trainer trainer, Trainer opponent, Connection connection) throws SQLException
     {
+        // Clear old teams 
+        trainer.setTeam(new ArrayList<>());
+        opponent.setTeam(new ArrayList<>());
+        
         // Create an array list to new pokemon team for the user
         ArrayList<Pokemon> trainerTeam = trainer.getTeam();
         
@@ -41,8 +46,8 @@ public class GeneratePokemonTeams
         Random number = new Random();
         
         // Set starter pokemon as first pokemon in team for trainer and opponent
-        Pokemon trainerStarter = trainer.getStarterPokemon();
-        Pokemon opponentStarter = opponent.getStarterPokemon();
+        Pokemon trainerStarter = DatabaseManager.getPokemon(connection, trainer.getStarterPokemon().getName());
+        Pokemon opponentStarter = DatabaseManager.getPokemon(connection, opponent.getStarterPokemon().getName());
         
         if(!trainerTeam.contains(trainerStarter))
         {
@@ -65,7 +70,7 @@ public class GeneratePokemonTeams
             int randomIndex = number.nextInt(pokemons.length);
             
             // Set added pokemon to the pokemon in the array list at the random index
-            addedPokemon = pokemons[randomIndex];
+            addedPokemon = DatabaseManager.getPokemon(DatabaseManager.getConnection(), pokemons[randomIndex].getName());
             
             // Add the pokemon at the random index to the trainer team array list
             trainerTeam.add(addedPokemon);
@@ -78,15 +83,19 @@ public class GeneratePokemonTeams
             int randomIndex = number.nextInt(pokemons.length);
             
             // Set added pokemon to the pokemon in the array list at the random index
-            addedPokemon = pokemons[randomIndex];
+            addedPokemon = DatabaseManager.getPokemon(DatabaseManager.getConnection(), pokemons[randomIndex].getName());
             
             // Add the pokemon at the random index to the opponent team array list
             opponentTeam.add(addedPokemon);
         }
         
         // Set the current pokemon of the trainer and opponent to their starter pokemon
-        trainerCurrentPokemon = trainer.getStarterPokemon();
-        opponentCurrentPokemon = opponent.getStarterPokemon();
+        trainerCurrentPokemon = trainerStarter;
+        opponentCurrentPokemon = opponentStarter;
+        
+        // Set starter pokemon in trainer object 
+        trainer.setStarterPokemon(trainerStarter);
+        opponent.setStarterPokemon(opponentStarter);
        
         // Reset Pokemon HP 
         int startingHP;

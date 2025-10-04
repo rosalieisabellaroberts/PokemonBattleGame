@@ -15,23 +15,17 @@ import java.util.ArrayList;
 public class DatabaseManager 
 {
     private static final String URL = "jdbc:derby:PokemonBattleGameDB;create=true";
-    private static Connection connection;
+    private static Connection connection = null;
     
     // Return a connection to the Derby database 
     public static Connection getConnection() throws SQLException
     {
-        try 
+        // If there is no existing connection object, or it was previously closed
+        if (connection == null || connection.isClosed())
         {
-           // If there is no existing connection object, or it was previously closed
-            if (connection == null || connection.isClosed())
-            {
-                // Create a new connection to the derby database using the URL
-                connection = DriverManager.getConnection(URL);
-            }     
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
+            // Create a new connection to the derby database using the URL
+            connection = DriverManager.getConnection(URL);
+        }     
         // Return the active connection 
         return connection;
     }
@@ -41,61 +35,69 @@ public class DatabaseManager
     {
         try (Statement statement = connection.createStatement())
         {
-            
-            dropTableIfExists(statement, "Moves");
-            dropTableIfExists(statement, "Trainers");
-            dropTableIfExists(statement, "Weaknesses");
-            dropTableIfExists(statement, "Strengths");
-            dropTableIfExists(statement, "Pokemon");
-            dropTableIfExists(statement, "Types");
-
-            // Create table for types 
-            statement.executeUpdate("CREATE TABLE Types(" +
+            // Create table for types if it doesn't already exist 
+            if (!tableExists(connection, "Types"))
+            {
+                statement.executeUpdate("CREATE TABLE Types(" +
                     "typeName VARCHAR(50) PRIMARY KEY)");
+            }
             
-            // Create table for pokemon
-            statement.executeUpdate("CREATE TABLE Pokemon ("+
+            
+            // Create table for pokemon if it doesn't already exist
+            if (!tableExists(connection, "Pokemon"))
+            {
+                statement.executeUpdate("CREATE TABLE Pokemon ("+
                     "name VARCHAR(50) PRIMARY KEY," +
                     "type VARCHAR(50)," +
                     "HP INT," +
                     "originalHP INT," +
                     "FOREIGN KEY (type) REFERENCES Types(typeName))");
+            }
             
-            // Create table for trainers 
-            statement.executeUpdate("CREATE TABLE Trainers (" +
+            // Create table for trainers if it doesn't already exist
+            if (!tableExists(connection, "Trainers"))
+            {
+               statement.executeUpdate("CREATE TABLE Trainers (" +
                     "username VARCHAR(50) PRIMARY KEY," +
                     "name VARCHAR(50)," +
                     "score INT," +
                     "level INT," +
                     "starterPokemon VARCHAR(50)," +
                     "challengeMessage VARCHAR(255)," +
-                    "FOREIGN KEY (starterPokemon) REFERENCES Pokemon(name))");
-   
-            // Create table for moves
-            statement.executeUpdate("CREATE TABLE Moves (" +
+                    "FOREIGN KEY (starterPokemon) REFERENCES Pokemon(name))"); 
+            }
+            
+            // Create table for moves if it doesn't already exist
+            if (!tableExists(connection, "Moves"))
+            {
+                statement.executeUpdate("CREATE TABLE Moves (" +
                     "id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY," +
                     "pokemonName VARCHAR(50)," +
                     "name VARCHAR(50)," +
                     "power DOUBLE," +
                     "accuracy DOUBLE," +
                     "FOREIGN KEY (pokemonName) REFERENCES Pokemon(name))");
-            
-            // Create table for weaknesses
-            statement.executeUpdate("CREATE TABLE Weaknesses(" +
+            }
+                   
+            // Create table for weaknesses if it doesn't already exist
+            if (!tableExists(connection, "Weaknesses"))
+            {
+               statement.executeUpdate("CREATE TABLE Weaknesses(" +
                     "typeName VARCHAR(50)," +
                     "weakAgainst VARCHAR(50)," +
                     "FOREIGN KEY (typeName) REFERENCES Types(typeName)," +
-                    "FOREIGN KEY (weakAgainst) REFERENCES Types(typeName))");
+                    "FOREIGN KEY (weakAgainst) REFERENCES Types(typeName))"); 
+            }
             
-            // Create table for strengths
-            statement.executeUpdate("CREATE TABLE Strengths(" +
+            // Create table for strengths if it doesn't already exist 
+            if (!tableExists(connection, "Strengths"))
+            {
+                statement.executeUpdate("CREATE TABLE Strengths(" +
                     "typeName VARCHAR(50)," +
                     "strongAgainst VARCHAR(50)," +
                     "FOREIGN KEY (typeName) REFERENCES Types(typeName)," +
                     "FOREIGN KEY (strongAgainst) REFERENCES Types(typeName))");
-            
-            statement.close();
-            
+            }
         } catch (SQLException e)
         {
             e.printStackTrace();
@@ -105,8 +107,27 @@ public class DatabaseManager
     // Add pokemon types into types table
     public static void populateTypesTable(Connection connection)
     {
-        String[] types = {"Grass", "Fire", "Water", "Bug", "Electric", "Normal",
-            "Fighting", "Rock", "Psychic", "Ghost"};
+        // Check if table is already populated
+        try (Statement statement = connection.createStatement())
+        {
+            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM Trainers");
+            resultSet.next();
+            if (resultSet.getInt(1) > 0)
+            {
+                // Table is already populated
+                return;
+            }
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+             
+        String[] types = 
+        {
+            "Normal", "Fire", "Water", "Electric", "Grass", "Ice", "Fighting",
+            "Poison", "Ground", "Flying", "Psychic", "Bug", "Rock", "Ghost",
+            "Dragon", "Dark", "Steel", "Fairy"
+        };
 
         try
         {
@@ -194,6 +215,56 @@ public class DatabaseManager
 
         pokemons.add(new Pokemon("Mewtwo", new Type("Psychic"), 106, new ArrayList<>()));
         pokemons.add(new Pokemon("Mew", new Type("Psychic"), 100, new ArrayList<>()));
+        
+        pokemons.add(new Pokemon("Blaziken", new Type("Fire"), 180, new ArrayList<>()));
+        pokemons.add(new Pokemon("Infernape", new Type("Fire"), 176, new ArrayList<>()));
+        pokemons.add(new Pokemon("Lucario", new Type("Fighting"), 170, new ArrayList<>()));
+        pokemons.add(new Pokemon("Garchomp", new Type("Dragon"), 108, new ArrayList<>()));
+        pokemons.add(new Pokemon("Hydreigon", new Type("Dark"), 192, new ArrayList<>()));
+        pokemons.add(new Pokemon("Metagross", new Type("Steel"), 180, new ArrayList<>()));
+        pokemons.add(new Pokemon("Excadrill", new Type("Ground"), 110, new ArrayList<>()));
+        pokemons.add(new Pokemon("Togekiss", new Type("Fairy"), 185, new ArrayList<>()));
+        pokemons.add(new Pokemon("Salamence", new Type("Dragon"), 195, new ArrayList<>()));
+        pokemons.add(new Pokemon("Tyranitar", new Type("Rock"), 100, new ArrayList<>()));
+        pokemons.add(new Pokemon("Volcarona", new Type("Bug"), 185, new ArrayList<>()));
+        pokemons.add(new Pokemon("Dragonite", new Type("Dragon"), 191, new ArrayList<>()));
+        pokemons.add(new Pokemon("Tyrantrum", new Type("Rock"), 190, new ArrayList<>()));
+        pokemons.add(new Pokemon("Kyogre", new Type("Water"), 100, new ArrayList<>()));
+        pokemons.add(new Pokemon("Groudon", new Type("Ground"), 100, new ArrayList<>()));
+        pokemons.add(new Pokemon("Rayquaza", new Type("Dragon"), 105, new ArrayList<>()));
+        pokemons.add(new Pokemon("Zygarde", new Type("Dragon"), 100, new ArrayList<>()));
+        pokemons.add(new Pokemon("Arceus", new Type("Normal"), 120, new ArrayList<>()));
+        pokemons.add(new Pokemon("Zekrom", new Type("Electric"), 100, new ArrayList<>()));
+        pokemons.add(new Pokemon("Reshiram", new Type("Fire"), 100, new ArrayList<>()));
+        pokemons.add(new Pokemon("Kyurem", new Type("Ice"), 125, new ArrayList<>()));
+        pokemons.add(new Pokemon("Darkrai", new Type("Dark"), 170, new ArrayList<>()));
+        pokemons.add(new Pokemon("Cobalion", new Type("Steel"), 191, new ArrayList<>()));
+        pokemons.add(new Pokemon("Terrakion", new Type("Rock"), 191, new ArrayList<>()));
+        pokemons.add(new Pokemon("Virizion", new Type("Grass"), 191, new ArrayList<>()));
+        pokemons.add(new Pokemon("Keldeo", new Type("Water"), 191, new ArrayList<>()));
+        pokemons.add(new Pokemon("Giratina", new Type("Ghost"), 150, new ArrayList<>()));
+        pokemons.add(new Pokemon("Dialga", new Type("Steel"), 100, new ArrayList<>()));
+        pokemons.add(new Pokemon("Palkia", new Type("Water"), 190, new ArrayList<>()));
+        pokemons.add(new Pokemon("Heatran", new Type("Fire"), 191, new ArrayList<>()));
+        pokemons.add(new Pokemon("Landorus", new Type("Ground"), 189, new ArrayList<>()));
+        pokemons.add(new Pokemon("Tornadus", new Type("Flying"), 179, new ArrayList<>()));
+        pokemons.add(new Pokemon("Thundurus", new Type("Electric"), 179, new ArrayList<>()));
+        pokemons.add(new Pokemon("Goodra", new Type("Dragon"), 190, new ArrayList<>()));
+        pokemons.add(new Pokemon("Dragapult", new Type("Dragon"), 188, new ArrayList<>()));
+        pokemons.add(new Pokemon("Zeraora", new Type("Electric"), 188, new ArrayList<>()));
+        pokemons.add(new Pokemon("Calyrex", new Type("Psychic"), 100, new ArrayList<>()));
+        pokemons.add(new Pokemon("Glastrier", new Type("Ice"), 100, new ArrayList<>()));
+        pokemons.add(new Pokemon("Spectrier", new Type("Ghost"), 100, new ArrayList<>()));
+        pokemons.add(new Pokemon("Regieleki", new Type("Electric"), 180, new ArrayList<>()));
+        pokemons.add(new Pokemon("Regidrago", new Type("Dragon"), 100, new ArrayList<>()));
+        pokemons.add(new Pokemon("Chi-Yu", new Type("Fire"), 185, new ArrayList<>()));
+        pokemons.add(new Pokemon("Roserade", new Type("Grass"), 175, new ArrayList<>()));
+        pokemons.add(new Pokemon("Darmanitan", new Type("Fire"), 105, new ArrayList<>()));
+        pokemons.add(new Pokemon("Camerupt", new Type("Fire"), 170, new ArrayList<>()));
+        pokemons.add(new Pokemon("Kommo-o", new Type("Dragon"), 175, new ArrayList<>()));
+        pokemons.add(new Pokemon("Volcanion", new Type("Fire"), 180, new ArrayList<>()));
+        pokemons.add(new Pokemon("Magnezone", new Type("Electric"), 170, new ArrayList<>()));
+        pokemons.add(new Pokemon("Golisopod", new Type("Bug"), 175, new ArrayList<>()));
 
         // Return list of Pokemon Objects 
         return pokemons;
@@ -202,6 +273,21 @@ public class DatabaseManager
     // Populate pokemon data into pokemon table 
     public static void populatePokemonTable(List<Pokemon> pokemons, Connection connection) 
     {
+        // Check if table is already populated
+        try (Statement statement = connection.createStatement())
+        {
+            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM Pokemon");
+            resultSet.next();
+            if (resultSet.getInt(1) > 0)
+            {
+                // Table is already populated
+                return;
+            }
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        
         try
         {
             String sql = "INSERT INTO Pokemon (name, type, HP, originalHP) VALUES (?, ?, ?, ?)";
@@ -217,8 +303,9 @@ public class DatabaseManager
                 try
                 {
                   preparedStatement.executeUpdate();  
-                } catch (SQLException ignored)
+                } catch (SQLException e)
                 {
+                    e.printStackTrace();
                 } 
             } 
         } catch (SQLException e)
@@ -230,18 +317,74 @@ public class DatabaseManager
     // Populate weakAgainst types into weaknesses table
     public static void populateWeaknesses(Connection connection)
     {
+        // Check if table is already populated
+        try (Statement statement = connection.createStatement())
+        {
+            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM Types");
+            resultSet.next();
+            if (resultSet.getInt(1) > 0)
+            {
+                // Table is already populated
+                return;
+            }
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        
         String[][] weaknesses = 
         {
-            {"Grass", "Fire"},
-            {"Grass", "Bug"},
-            {"Fire", "Water"},
-            {"Water", "Electric"},
-            {"Psychic", "Ghost"},
             {"Normal", "Fighting"},
-            {"Rock", "Water"},
+            {"Fire", "Water"},
+            {"Fire", "Ground"},
+            {"Fire", "Rock"},
+            {"Water", "Electric"},
+            {"Water", "Grass"},
+            {"Electric", "Ground"},
             {"Grass", "Fire"},
+            {"Grass", "Ice"},
+            {"Grass", "Poison"},
+            {"Grass", "Flying"},
+            {"Grass", "Bug"},
+            {"Ice", "Fire"},
+            {"Ice", "Fighting"},
+            {"Ice", "Rock"},
+            {"Ice", "Steel"},
+            {"Fighting", "Flying"},
             {"Fighting", "Psychic"},
+            {"Fighting", "Fairy"},
+            {"Poison", "Ground"},
+            {"Poison", "Psychic"},
+            {"Ground", "Water"},
+            {"Ground", "Grass"},
+            {"Ground", "Ice"},
+            {"Flying", "Electric"},
+            {"Flying", "Ice"},
+            {"Flying", "Rock"},
+            {"Psychic", "Bug"},
+            {"Psychic", "Ghost"},
+            {"Psychic", "Dark"},
             {"Bug", "Fire"},
+            {"Bug", "Flying"},
+            {"Bug", "Rock"},
+            {"Rock", "Water"},
+            {"Rock", "Grass"},
+            {"Rock", "Fighting"},
+            {"Rock", "Ground"},
+            {"Rock", "Steel"},
+            {"Ghost", "Ghost"},
+            {"Ghost", "Dark"},
+            {"Dragon", "Ice"},
+            {"Dragon", "Dragon"},
+            {"Dragon", "Fairy"},
+            {"Dark", "Fighting"},
+            {"Dark", "Bug"},
+            {"Dark", "Fairy"},
+            {"Steel", "Fire"},
+            {"Steel", "Fighting"},
+            {"Steel", "Ground"},
+            {"Fairy", "Poison"},
+            {"Fairy", "Steel"}
         };
         
         try
@@ -269,19 +412,76 @@ public class DatabaseManager
      // Populate strongAgainst types into strengths table
     public static void populateStrengths(Connection connection)
     {
+        // Check if table is already populated
+        try (Statement statement = connection.createStatement())
+        {
+            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM Types");
+            resultSet.next();
+            if (resultSet.getInt(1) > 0)
+            {
+                // Table is already populated
+                return;
+            }
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        
         String[][] strengths = 
         {
-            {"Grass", "Water"},
             {"Fire", "Grass"},
+            {"Fire", "Ice"},
+            {"Fire", "Bug"},
+            {"Fire", "Steel"},
             {"Water", "Fire"},
+            {"Water", "Ground"},
+            {"Water", "Rock"},
             {"Electric", "Water"},
-            {"Psychic", "Fighting"},
-            {"Bug", "Grass"},
-            {"Rock", "Fire"},
+            {"Electric", "Flying"},
+            {"Grass", "Water"},
+            {"Grass", "Ground"},
+            {"Grass", "Rock"},
+            {"Ice", "Grass"},
+            {"Ice", "Ground"},
+            {"Ice", "Flying"},
+            {"Ice", "Dragon"},
+            {"Fighting", "Normal"},
+            {"Fighting", "Ice"},
             {"Fighting", "Rock"},
-            {"Ghost", "Psychic"}
+            {"Fighting", "Dark"},
+            {"Fighting", "Steel"},
+            {"Poison", "Grass"},
+            {"Poison", "Fairy"},
+            {"Ground", "Fire"},
+            {"Ground", "Electric"},
+            {"Ground", "Poison"},
+            {"Ground", "Rock"},
+            {"Ground", "Steel"},
+            {"Flying", "Grass"},
+            {"Flying", "Fighting"},
+            {"Flying", "Bug"},
+            {"Psychic", "Fighting"},
+            {"Psychic", "Poison"},
+            {"Bug", "Grass"},
+            {"Bug", "Psychic"},
+            {"Bug", "Dark"},
+            {"Rock", "Fire"},
+            {"Rock", "Ice"},
+            {"Rock", "Flying"},
+            {"Rock", "Bug"},
+            {"Ghost", "Psychic"},
+            {"Ghost", "Ghost"},
+            {"Dragon", "Dragon"},
+            {"Dark", "Psychic"},
+            {"Dark", "Ghost"},
+            {"Steel", "Ice"},
+            {"Steel", "Rock"},
+            {"Steel", "Fairy"},
+            {"Fairy", "Fighting"},
+            {"Fairy", "Dragon"},
+            {"Fairy", "Dark"}
         };
-        
+
         try
         {
             String sql = "INSERT INTO Strengths (typeName, strongAgainst) VALUES (?,?)";
@@ -307,6 +507,21 @@ public class DatabaseManager
     // Populate trainer data into trainer table
     public static void populateTrainers(Connection connection)
     {
+        // Check if table is already populated
+        try (Statement statement = connection.createStatement())
+        {
+            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM Trainers");
+            resultSet.next();
+            if (resultSet.getInt(1) > 0)
+            {
+                // Table is already populated
+                return;
+            }
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        
         String[][] trainers = 
         {
             {"k3tchup", "Ash", "100", "5", "Pikachu", "Pikachu, I choose you!"},
@@ -339,8 +554,9 @@ public class DatabaseManager
                 try
                 {
                     preparedStatement.executeUpdate();
-                } catch(SQLException ignored)
+                } catch(SQLException e)
                 {  
+                    e.printStackTrace();
                 }
             }
         } catch (SQLException e)
@@ -352,6 +568,21 @@ public class DatabaseManager
     // Populate moves data into moves table 
     public static void populateMoves(Connection connection) 
     {
+        // Check if table is already populated
+        try (Statement statement = connection.createStatement())
+        {
+            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM Moves");
+            resultSet.next();
+            if (resultSet.getInt(1) > 0)
+            {
+                // Table is already populated
+                return;
+            }
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        
         String[][] moves = {
             {"Bulbasaur", "Vine Whip", "45", "100"},
             {"Bulbasaur", "Tackle", "40", "100"},
@@ -479,6 +710,201 @@ public class DatabaseManager
             {"Flareon", "Flame Charge", "85", "100"},
             {"Flareon", "Fire Fang", "80", "95"},
             {"Flareon", "Flamethrower", "90", "100"},
+            {"Blaziken", "Blaze Kick", "85", "90"},
+            {"Blaziken", "Sky Uppercut", "90", "85"},
+            {"Blaziken", "Flare Blitz", "120", "85"},
+
+            {"Infernape", "Close Combat", "120", "100"},
+            {"Infernape", "Flame Wheel", "60", "100"},
+            {"Infernape", "Mach Punch", "40", "100"},
+
+            {"Lucario", "Aura Sphere", "80", "100"},
+            {"Lucario", "Close Combat", "120", "100"},
+            {"Lucario", "Bone Rush", "25", "90"},
+
+            {"Garchomp", "Dragon Claw", "80", "100"},
+            {"Garchomp", "Earthquake", "100", "100"},
+            {"Garchomp", "Crunch", "80", "100"},
+
+            {"Hydreigon", "Dark Pulse", "80", "100"},
+            {"Hydreigon", "Dragon Pulse", "85", "100"},
+            {"Hydreigon", "Hyper Voice", "90", "100"},
+
+            {"Metagross", "Meteor Mash", "90", "90"},
+            {"Metagross", "Zen Headbutt", "80", "90"},
+            {"Metagross", "Earthquake", "100", "100"},
+
+            {"Excadrill", "Drill Run", "80", "95"},
+            {"Excadrill", "Iron Head", "80", "100"},
+            {"Excadrill", "Earthquake", "100", "100"},
+
+            {"Togekiss", "Air Slash", "75", "95"},
+            {"Togekiss", "Dazzling Gleam", "80", "100"},
+            {"Togekiss", "Aura Sphere", "80", "100"},
+
+            {"Salamence", "Dragon Claw", "80", "100"},
+            {"Salamence", "Fire Fang", "65", "95"},
+            {"Salamence", "Crunch", "80", "100"},
+
+            {"Tyranitar", "Stone Edge", "100", "80"},
+            {"Tyranitar", "Crunch", "80", "100"},
+            {"Tyranitar", "Earthquake", "100", "100"},
+
+            {"Volcarona", "Fiery Dance", "80", "100"},
+            {"Volcarona", "Bug Buzz", "90", "100"},
+            {"Volcarona", "Air Slash", "75", "95"},
+
+            {"Dragonite", "Dragon Tail", "60", "90"},
+            {"Dragonite", "Outrage", "120", "100"},
+            {"Dragonite", "Fire Punch", "75", "100"},
+
+            {"Tyrantrum", "Head Smash", "150", "80"},
+            {"Tyrantrum", "Dragon Claw", "80", "100"},
+            {"Tyrantrum", "Earthquake", "100", "100"},
+
+            {"Kyogre", "Water Spout", "150", "100"},
+            {"Kyogre", "Surf", "90", "100"},
+            {"Kyogre", "Ice Beam", "90", "100"},
+
+            {"Groudon", "Precipice Blades", "120", "85"},
+            {"Groudon", "Earthquake", "100", "100"},
+            {"Groudon", "Fire Punch", "75", "100"},
+
+            {"Rayquaza", "Dragon Ascent", "120", "100"},
+            {"Rayquaza", "Extreme Speed", "80", "100"},
+            {"Rayquaza", "Outrage", "120", "100"},
+
+            {"Zygarde", "Land’s Wrath", "90", "100"},
+            {"Zygarde", "Thousand Arrows", "90", "100"},
+            {"Zygarde", "Dragon Pulse", "85", "100"},
+
+            {"Arceus", "Judgment", "100", "100"},
+            {"Arceus", "Extreme Speed", "80", "100"},
+            {"Arceus", "Recover", "0", "100"},
+
+            {"Zekrom", "Bolt Strike", "130", "85"},
+            {"Zekrom", "Dragon Claw", "80", "100"},
+            {"Zekrom", "Crunch", "80", "100"},
+
+            {"Reshiram", "Blue Flare", "120", "85"},
+            {"Reshiram", "Dragon Pulse", "85", "100"},
+            {"Reshiram", "Fusion Flare", "100", "100"},
+
+            {"Kyurem", "Ice Beam", "90", "100"},
+            {"Kyurem", "Freeze Shock", "140", "90"},
+            {"Kyurem", "Dragon Pulse", "85", "100"},
+
+            {"Darkrai", "Dark Void", "0", "50"},
+            {"Darkrai", "Night Daze", "85", "100"},
+            {"Darkrai", "Dark Pulse", "80", "100"},
+
+            {"Cobalion", "Iron Head", "80", "100"},
+            {"Cobalion", "Sacred Sword", "90", "100"},
+            {"Cobalion", "Close Combat", "120", "100"},
+
+            {"Terrakion", "Stone Edge", "100", "80"},
+            {"Terrakion", "Close Combat", "120", "100"},
+            {"Terrakion", "Iron Head", "80", "100"},
+
+            {"Virizion", "Leaf Blade", "90", "100"},
+            {"Virizion", "Sacred Sword", "90", "100"},
+            {"Virizion", "Close Combat", "120", "100"},
+
+            {"Keldeo", "Secret Sword", "90", "100"},
+            {"Keldeo", "Hydro Pump", "110", "80"},
+            {"Keldeo", "Bubble Beam", "65", "100"},
+
+            {"Giratina", "Shadow Force", "120", "100"},
+            {"Giratina", "Dragon Claw", "80", "100"},
+            {"Giratina", "Aura Sphere", "80", "100"},
+
+            {"Dialga", "Roar of Time", "150", "90"},
+            {"Dialga", "Flash Cannon", "80", "100"},
+            {"Dialga", "Earth Power", "90", "100"},
+
+            {"Palkia", "Spacial Rend", "100", "95"},
+            {"Palkia", "Hydro Pump", "110", "80"},
+            {"Palkia", "Dragon Pulse", "85", "100"},
+
+            {"Heatran", "Lava Plume", "80", "100"},
+            {"Heatran", "Earth Power", "90", "100"},
+            {"Heatran", "Flamethrower", "90", "100"},
+
+            {"Landorus", "Earth Power", "90", "100"},
+            {"Landorus", "Stone Edge", "100", "80"},
+            {"Landorus", "U-turn", "70", "100"},
+
+            {"Tornadus", "Air Slash", "75", "95"},
+            {"Tornadus", "Hurricane", "110", "70"},
+            {"Tornadus", "U-turn", "70", "100"},
+
+            {"Thundurus", "Thunderbolt", "90", "100"},
+            {"Thundurus", "Discharge", "80", "100"},
+            {"Thundurus", "Volt Switch", "70", "100"},
+
+            {"Goodra", "Dragon Pulse", "85", "100"},
+            {"Goodra", "Sludge Bomb", "90", "100"},
+            {"Goodra", "Thunderbolt", "90", "100"},
+
+            {"Dragapult", "Dragon Darts", "50", "100"},
+            {"Dragapult", "Phantom Force", "90", "100"},
+            {"Dragapult", "Dragon Pulse", "85", "100"},
+
+            {"Zeraora", "Plasma Fists", "100", "100"},
+            {"Zeraora", "Close Combat", "120", "100"},
+            {"Zeraora", "Thunder Punch", "75", "100"},
+
+            {"Calyrex", "Psycho Cut", "70", "100"},
+            {"Calyrex", "Future Sight", "120", "100"},
+            {"Calyrex", "Glacial Lance", "130", "90"},
+
+            {"Glastrier", "Ice Punch", "75", "100"},
+            {"Glastrier", "High Horsepower", "95", "100"},
+            {"Glastrier", "Close Combat", "120", "100"},
+
+            {"Spectrier", "Shadow Ball", "80", "100"},
+            {"Spectrier", "Dark Pulse", "80", "100"},
+            {"Spectrier", "Hex", "65", "100"},
+
+            {"Regieleki", "Thunderbolt", "90", "100"},
+            {"Regieleki", "Volt Switch", "70", "100"},
+            {"Regieleki", "Electro Ball", "80", "100"},
+
+            {"Regidrago", "Dragon Energy", "100", "100"},
+            {"Regidrago", "Dragon Claw", "80", "100"},
+            {"Regidrago", "Power Whip", "120", "90"},
+
+            {"Chi-Yu", "Fire Blast", "110", "85"},
+            {"Chi-Yu", "Flamethrower", "90", "100"},
+            {"Chi-Yu", "Overheat", "130", "90"},
+
+            {"Roserade", "Leaf Storm", "130", "90"},
+            {"Roserade", "Sludge Bomb", "90", "100"},
+            {"Roserade", "Energy Ball", "80", "100"},
+
+            {"Darmanitan", "Flare Blitz", "120", "85"},
+            {"Darmanitan", "Fire Punch", "75", "100"},
+            {"Darmanitan", "Superpower", "120", "100"},
+
+            {"Camerupt", "Eruption", "150", "85"},
+            {"Camerupt", "Earth Power", "90", "100"},
+            {"Camerupt", "Lava Plume", "80", "100"},
+
+            {"Kommo-o", "Clanging Scales", "110", "100"},
+            {"Kommo-o", "Dragon Claw", "80", "100"},
+            {"Kommo-o", "Close Combat", "120", "100"},
+
+            {"Volcanion", "Steam Eruption", "110", "95"},
+            {"Volcanion", "Flamethrower", "90", "100"},
+            {"Volcanion", "Earth Power", "90", "100"},
+
+            {"Magnezone", "Zap Cannon", "120", "50"},
+            {"Magnezone", "Thunderbolt", "90", "100"},
+            {"Magnezone", "Flash Cannon", "80", "100"},
+
+            {"Golisopod", "Liquidation", "85", "100"},
+            {"Golisopod", "First Impression", "90", "100"},
+            {"Golisopod", "Leech Life", "80", "100"}
         };
 
         try 
@@ -509,26 +935,25 @@ public class DatabaseManager
     // Load the pokemon moves 
     public static void loadPokemonMoves(Connection connection, Pokemon pokemon)
     {
-        try
+        String sql = "SELECT name, power, accuracy FROM MOVES WHERE pokemonName = ?";
+        
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
         {
-            String sql = "SELECT name, power, accuracy FROM MOVES WHERE pokemonName = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            
             preparedStatement.setString(1, pokemon.getName());
-            ResultSet resultSet = preparedStatement.executeQuery();
             
-            ArrayList<Move> moves = new ArrayList<>();
-            
-            while(resultSet.next())
+            try (ResultSet resultSet = preparedStatement.executeQuery())
             {
-                String name = resultSet.getString("name");
-                int power = resultSet.getInt("power");
-                double accuracy = resultSet.getDouble("accuracy");
-                moves.add(new Move(name, power, accuracy));
-            }
-            pokemon.setMoves(moves);
+                ArrayList<Move> moves = new ArrayList<>();
             
-            resultSet.close();    
+                while(resultSet.next())
+                {
+                    String name = resultSet.getString("name");
+                    int power = resultSet.getInt("power");
+                    double accuracy = resultSet.getDouble("accuracy");
+                    moves.add(new Move(name, power, accuracy));
+                }
+                pokemon.setMoves(moves);
+            }
         } catch (SQLException e)
         {
             e.printStackTrace();
@@ -537,15 +962,14 @@ public class DatabaseManager
     
     
     // Get method to return a list of all trainers 
-    public static List<Trainer> getAllTrainers()
+    public static List<Trainer> getAllTrainers(Connection connection)
     {
         List<Trainer> trainers = new ArrayList<>();
+        String sql = "SELECT * FROM Trainers";
         
-        try
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery())
         {
-            String sql = "SELECT * FROM Trainers";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            ResultSet resultSet = preparedStatement.executeQuery();
             
             // Store trainer data in a temporary list
             List<String[]> temporaryTrainers = new ArrayList<>();
@@ -583,7 +1007,7 @@ public class DatabaseManager
     }
     
     // Get method to return a trainer whose name matches the query 
-    public static Trainer getTrainer(String username) 
+    public static Trainer getTrainer(String username, Connection connection) 
     {
         Trainer trainer = null;
         String sql = "SELECT username, name, challengeMessage, score, level, starterPokemon, challengeMessage FROM Trainers WHERE username = ?";
@@ -749,5 +1173,68 @@ public class DatabaseManager
         
         return null;
     }
-
+    
+    // Update trainer score in database
+    public static void updateTrainerScore(Connection connection, String username, int newScore)
+    {
+        String sql = "UPDATE Trainers SET score = ? WHERE username = ?";
+        
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.setInt(1, newScore);
+            preparedStatement.setString(2, username);
+            
+            int rowsUpdated = preparedStatement.executeUpdate();
+            
+            if (rowsUpdated == 0)
+            {
+                System.out.println("Professor Oak: I don't remember meeting any trainers with that username!");
+            }   
+        } catch (SQLException e)
+        {
+            System.out.println("Professor Oak: Whoops! I forgot which score I was supposed to save! " + e.getMessage());
+        }
+    }        
+    
+    // Get trainer score from database 
+    public static int getTrainerScore(Connection connection, String username)
+    {
+        String sql = "SELECT score FROM Trainers WHERE username = ?";
+        
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.setString(1, username);
+            
+            try (ResultSet resultSet = preparedStatement.executeQuery())
+            {
+                if (resultSet.next())
+                {
+                    return resultSet.getInt("score");
+                } else
+                {
+                    System.out.println("Professor Oak: I don't remember meeting any trainers with that username!");
+                }
+            } catch (SQLException e)
+            {
+                System.out.println("Professor Oak: Whoops! I forgot where I saved your score! " + e.getMessage());
+            }  
+        } catch (SQLException e)
+        {
+            System.out.println("Professor Oak: Whoops! I forgot where I saved your score! " + e.getMessage());
+        }  
+        
+        // Return default score of 0 if not found;
+        return 0;
+    }
+    
+    // Check if table already exists 
+    public static boolean tableExists(Connection connection, String tableName) throws SQLException
+    {
+        DatabaseMetaData metaData = connection.getMetaData();
+        
+        try(ResultSet tables = metaData.getTables(null, null, tableName.toUpperCase(), null))
+        {
+            return tables.next();
+        }
+    }
 }

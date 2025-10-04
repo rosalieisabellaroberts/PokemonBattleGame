@@ -5,6 +5,7 @@
 package pokemonbattlegame;
 
 import java.util.*;
+import java.sql.*;
 
 /**
  *
@@ -15,7 +16,7 @@ public class SetupGame
     private Pokemon[] pokemons;
     private Trainer trainer;
 
-    public Trainer run() 
+    public Trainer run(Connection connection) 
     {
         Scanner scanner = new Scanner(System.in);
 
@@ -29,7 +30,7 @@ public class SetupGame
         String username = scanner.nextLine().trim();
 
         // Try to load the trainer from the database 
-        this.trainer = DatabaseManager.getTrainer(username);
+        this.trainer = DatabaseManager.getTrainer(username, connection);
 
         // Load list of Pokemon objects from the database 
         List<Pokemon> pokemonList = DatabaseManager.getPokemonList();
@@ -48,6 +49,7 @@ public class SetupGame
         {
             // Print welcome message 
             System.out.println("Professor Oak: Welcome back " + trainer.getName() + "! Your score is: " + trainer.getScore());
+            return this.trainer;
         }
         
         // If trainer doesn't exist, create a new one 
@@ -58,7 +60,7 @@ public class SetupGame
                 createNewTrainer(username, scanner);
                    
                 // Save new trainer into the database
-                SaveManager.saveTrainer(this.trainer);
+                SaveManager.saveTrainer(this.trainer, connection);
                    
             } catch (Exception e)
             {

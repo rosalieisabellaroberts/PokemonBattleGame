@@ -93,6 +93,7 @@ public class OpponentTurn
             {
                 Thread.sleep(2000);  
                 System.out.println(trainerCurrentPokemon.getName() + " fainted!");
+                Thread.sleep(2000);
                 boolean playerSwitched = false;
                 for (Pokemon p:trainer.getTeam())
                 {
@@ -108,6 +109,7 @@ public class OpponentTurn
                         }
                         
                         System.out.println("You sent out " + p.getName() + "!");
+                        Thread.sleep(2000);
                         playerSwitched = true;
                         break;
                     }
@@ -125,6 +127,7 @@ public class OpponentTurn
         {
             Thread.sleep(2000);  
             System.out.println(opponentCurrentPokemon.getName() + " missed!");
+            Thread.sleep(2000);
         }
     
         DisplayGameDetails gameDetails = new DisplayGameDetails();

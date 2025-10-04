@@ -10,6 +10,7 @@ package pokemonbattlegame;
  */
 
 import java.util.Scanner;
+import java.sql.*;
 
 public class BattleManager 
 {
@@ -20,32 +21,56 @@ public class BattleManager
         this.game = game;
     }
 
-    public void startBattle() throws InterruptedException 
+    public void startBattle(Connection connection) throws InterruptedException, SQLException
     {
-        Thread.sleep(2000);
+        Scanner scanner = new Scanner(System.in);
+        boolean keepBattling = true;
         
         System.out.println("Professor Oaks: It is now time for you and " +
-                game.getTrainer().getStarterPokemon().getName() +
-                " to journey into the magical world of Pokemon!\n");
+                    game.getTrainer().getStarterPokemon().getName() +
+                    " to journey into the magical world of Pokemon!\n");
 
         Thread.sleep(2000);
-        System.out.println("When you are ready, press any key to start...");
-        new Scanner(System.in).nextLine();
-
-        // Generate Pokemon teams
-        GeneratePokemonTeams generatedPokemonTeams = new GeneratePokemonTeams();
-        generatedPokemonTeams.generatePokemonTeams(game.getTrainer(), game.getOpponent());
-
-        System.out.println(game.getOpponent().getName()+": "+game.getOpponent().getChallengeMessage());
-        Thread.sleep(2000);
+        System.out.println("When you are ready, press enter to start...");
+        scanner.nextLine();
         
-        // Display game details
-        DisplayGameDetails gameDetails = new DisplayGameDetails();
-        gameDetails.displayGameDetails(game.getTrainer(), game.getOpponent());
+        while (keepBattling)
+        {   
+            // Generate a new opponent for each battle
+            GenerateOpponent generatedOpponent = new GenerateOpponent();
+            generatedOpponent.generateOpponent(game.getTrainer(), connection);
+            game.setOpponent(generatedOpponent.getOpponent());
             
-        // Start actual battle
-        Battle battle = new Battle(game.getTrainer(), game.getOpponent(), game.getTrainer().getStarterPokemon(), game.getOpponent().getStarterPokemon());
-        battle.runBattle();
+            // Generate new Pokemon teams for each battle 
+            GeneratePokemonTeams generatedPokemonTeams = new GeneratePokemonTeams();
+            generatedPokemonTeams.setPokemons(DatabaseManager.getPokemonList().toArray(new Pokemon[0]));
+            generatedPokemonTeams.generatePokemonTeams(game.getTrainer(), game.getOpponent(), connection);
+
+            System.out.println(game.getOpponent().getName()+": "+game.getOpponent().getChallengeMessage());
+            Thread.sleep(2000);
+
+            // Display game details
+            DisplayGameDetails gameDetails = new DisplayGameDetails();
+            gameDetails.displayGameDetails(game.getTrainer(), game.getOpponent());
+
+            // Start actual battle
+            Battle battle = new Battle(game.getTrainer(), game.getOpponent(), game.getTrainer().getStarterPokemon(), game.getOpponent().getStarterPokemon());
+            battle.runBattle(connection);
+
+            // Prompt user to battle again 
+            System.out.println("Your poke-adventure isn't over yet! Battle again? (yes/no)");
+
+            String selection = scanner.nextLine().trim().toLowerCase();
+            if (selection.equals("y") || selection.equals("yes"))
+            {
+                System.out.println("\nPrepare for your next battle!");
+            }
+            else
+            {
+                System.out.println("\nThanks for playing! Safe travels trainer...");
+                keepBattling = false;
+            }
+        }       
     }
 }
 

@@ -6,6 +6,7 @@ package pokemonbattlegame;
 
 import java.util.List;
 import java.util.Random;
+import java.sql.*;
 
 /**
  *
@@ -16,10 +17,10 @@ public class GenerateOpponent
 {
     private Trainer opponent;
     
-    public void generateOpponent(Trainer trainer) throws InterruptedException
+    public void generateOpponent(Trainer trainer, Connection connection) throws InterruptedException
     {
         // Call getAllTrainers from Database Manager to return a list of trainer objects
-        List<Trainer> trainers = DatabaseManager.getAllTrainers();
+        List<Trainer> trainers = DatabaseManager.getAllTrainers(connection);
                 
         // If array is empty, return error message and set opponent to null
         if (trainers == null || trainers.isEmpty())

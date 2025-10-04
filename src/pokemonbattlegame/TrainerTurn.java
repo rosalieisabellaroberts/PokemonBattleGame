@@ -43,8 +43,8 @@ public class TrainerTurn
     double randomAccuracy;
 
     System.out.println("\n(1) FIGHT (2) SWITCH POKEMON (3) RUN");
-    System.out.println("What will you do? Enter a digit between 1-3...");
-    int selection = scanner.nextInt();
+    System.out.println("What will you do?");
+    int selection = getValidInput(scanner, 1, 3, "Enter a digit between 1-3...");
 
     switch (selection) {
         case 1:
@@ -57,8 +57,8 @@ public class TrainerTurn
                 orderNumber++;
             }
 
-            System.out.println("\nWhich will you use? Enter a digit...");
-            moveSelection = scanner.nextInt();
+            System.out.println("\nWhich will you use?");
+            moveSelection = getValidInput(scanner, 1, moves.size(), "Enter a digit between 1-"+ moves.size()+"...");
 
             Move selectedMove = moves.get(moveSelection - 1);
             System.out.println("\n" + trainerCurrentPokemon.getName() + " used " + selectedMove.getName() + "!");
@@ -96,6 +96,7 @@ public class TrainerTurn
 
                 if (opponentCurrentPokemon.getHP() <= 0) {
                     System.out.println(opponentCurrentPokemon.getName() + " fainted!");
+                    Thread.sleep(2000);
                     boolean oppSwitched = false;
 
                     for (Pokemon p : opponent.getTeam()) 
@@ -105,6 +106,7 @@ public class TrainerTurn
                             opponentCurrentPokemon = p;
                             opponent.setStarterPokemon(p);
                             System.out.println(opponent.getName() + " sent out " + p.getName() + "!");
+                            Thread.sleep(2000);
                             oppSwitched = true;
                             break;
                         }
@@ -119,6 +121,7 @@ public class TrainerTurn
 
             } else {
                 System.out.println(trainerCurrentPokemon.getName() + " missed!");
+                Thread.sleep(2000);
             }
 
             // Trainer's Pokémon faint check after opponent's attack
@@ -151,7 +154,7 @@ public class TrainerTurn
 
         while (!switched) 
         {
-            System.out.println("\nChoose a new Pokémon to continue:");
+            System.out.println("\nChoose a new pokemon to continue:");
             int idx = 1;
 
             for (Pokemon p : trainer.getTeam()) 
@@ -162,7 +165,7 @@ public class TrainerTurn
             }
 
             System.out.println("(0) Forfeit battle");
-            int choice = scanner.nextInt();
+            int choice = getValidInput(scanner, 0, trainer.getTeam().size(), "Choose a pokemon or enter 0 to forfeit the battle...");
 
             if (choice == 0) 
             {
@@ -204,7 +207,7 @@ public class TrainerTurn
         }
 
         System.out.println("\nChoose a Pokémon (1-" + trainer.getTeam().size() + ") or 0 to cancel:");
-        int switchChoice = scanner.nextInt();
+        int switchChoice = getValidInput(scanner, 0, trainer.getTeam().size(), "Choose a pokemon or enter 0 to cancel...");
 
         if (switchChoice == 0) return;
 
@@ -233,6 +236,37 @@ public class TrainerTurn
 
         DisplayGameDetails gameDetails = new DisplayGameDetails();
         gameDetails.displayGameDetails(trainer, opponent);
+    }
+    
+    // Helper method to check for valid input 
+    private int getValidInput(Scanner scanner, int min, int max, String prompt)
+    {
+        int input = -1;
+        
+        while (true)
+        {
+            System.out.println(prompt);
+            // Read in full line
+            String line = scanner.nextLine();
+            
+            try
+            {
+                // Try to parse input 
+                input = Integer.parseInt(line.trim());
+                
+                if (input >= min && input <= max)
+                {
+                    return input;
+                }
+                else
+                {
+                    System.out.println("Please enter a digit between "+ min +" and " + max + "...");
+                }
+            } catch (NumberFormatException e)
+            {
+                System.out.println("Invalid input trainer! Please enter a digit...");
+            }
+        }
     }
 }
 

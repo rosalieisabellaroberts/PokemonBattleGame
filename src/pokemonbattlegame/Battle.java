@@ -10,6 +10,7 @@ package pokemonbattlegame;
  */
     
 import java.util.*;
+import java.sql.*;
 
 public class Battle 
 {
@@ -29,7 +30,7 @@ public class Battle
         this.opponentCurrentPokemon = opponent.getStarterPokemon();
     }
 
-    public void runBattle() throws InterruptedException 
+    public void runBattle(Connection connection) throws InterruptedException 
     {
         int startingScore = trainer.getScore();
         Pokemon savedStarter = trainer.getStarterPokemon();
@@ -71,22 +72,28 @@ public class Battle
             }
         }
 
-        // === END GAME HANDLING ===
+        // End of game 
         trainer.setStarterPokemon(savedStarter);
 
         if (!ranAway) {
             if (trainerWon) {
                 trainer.setScore(trainer.getScore() + 100);
+                // Update score in database 
+                DatabaseManager.updateTrainerScore(connection, trainer.getUsername(), trainer.getScore());
                 System.out.println("You win! +100 score. New score: " + trainer.getScore());
+                Thread.sleep(2000);
             } else {
                 trainer.setScore(trainer.getScore() - 50);
+                // Update score in database 
+                DatabaseManager.updateTrainerScore(connection, trainer.getUsername(), trainer.getScore());
                 System.out.println("You lost... -50 score. New score: " + trainer.getScore());
+                Thread.sleep(2000);
             }
         } else {
             System.out.println("No score change for running.");
         }
 
-        SaveManager.saveTrainer(trainer);
+        SaveManager.saveTrainer(trainer, connection);
 
         // evolution check
         int prevStage = stageFromScore(startingScore);
@@ -113,6 +120,27 @@ public class Battle
         System.out.print("."); Thread.sleep(600);
         System.out.println("."); Thread.sleep(600);
         System.out.println("Congratulations! Your " + mon.getName() + " evolved to Stage " + targetStage + "!");
+    }
+    
+    public void resetBattle()
+    {
+        trainerCurrentPokemon = trainer.getStarterPokemon();
+        opponentCurrentPokemon = opponent.getStarterPokemon();
+        trainerWon = false;
+        gameFinished = false;
+        ranAway = false;
+        
+        // Reset HP of all pokemon for trainer
+        for (Pokemon pokemon : trainer.getTeam())
+        {
+            pokemon.setHP(pokemon.getOriginalHP());
+        }
+        
+        // Reset HP of all pokemon for opponent
+        for (Pokemon pokemon : opponent.getTeam())
+        {
+            pokemon.setHP(pokemon.getOriginalHP());
+        }
     }
 }
 
