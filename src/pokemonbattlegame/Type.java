@@ -9,7 +9,7 @@ import java.util.*;
  *
  * @author dilro
  */
-public class Type
+public class Type implements Effectiveness
 {
     private String name;
     private ArrayList<Type> weakAgainst;
@@ -20,6 +20,32 @@ public class Type
        this.name = name;
        this.weakAgainst = new ArrayList<>();
        this.strongAgainst = new ArrayList<>();
+    }
+    
+    @Override 
+    public boolean isSuperEffectiveAgainst(pokemonbattlegame.Type attackType, pokemonbattlegame.Type defenderType)
+    {
+        for (Type strongType : attackType.getStrongAgainst())
+        {
+            if (strongType.getName().equalsIgnoreCase(defenderType.getName()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    @Override 
+    public boolean isNotVeryEffectiveAgainst(pokemonbattlegame.Type attackType, pokemonbattlegame.Type defenderType)
+    {
+        for (Type weakType : attackType.getWeakAgainst())
+        {
+            if (weakType.getName().equalsIgnoreCase(defenderType.getName()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
     
     public String getName()

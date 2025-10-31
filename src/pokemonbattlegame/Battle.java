@@ -48,7 +48,7 @@ public class Battle
                         trainerCurrentPokemon, opponentCurrentPokemon,
                         scanner, random
                 );
-                TrainerTurnResult result = trainerTurn.takeTurn();
+                BattleResult result = trainerTurn.takeTurn();
                 trainerCurrentPokemon = result.updatedTrainerPokemon;
                 opponentCurrentPokemon = result.updatedOpponentPokemon;
                 gameFinished = result.gameFinished;
@@ -64,7 +64,7 @@ public class Battle
                         trainerCurrentPokemon, opponentCurrentPokemon,
                         random
                 );
-                OpponentTurnResult result = oppTurn.takeTurn();
+                BattleResult result = oppTurn.takeTurn();
                 trainerCurrentPokemon = result.updatedTrainerPokemon;
                 opponentCurrentPokemon = result.updatedOpponentPokemon;
                 gameFinished = result.gameFinished;
@@ -75,14 +75,19 @@ public class Battle
         // End of game 
         trainer.setStarterPokemon(savedStarter);
 
+        // If the trainer has not opted to run away
         if (!ranAway) {
+            // And if the trainer has won the game
             if (trainerWon) {
+                // Increment the trainer's score by 100
                 trainer.setScore(trainer.getScore() + 100);
                 // Update score in database 
                 DatabaseManager.updateTrainerScore(connection, trainer.getUsername(), trainer.getScore());
                 System.out.println("You win! +100 score. New score: " + trainer.getScore());
                 Thread.sleep(2000);
+            // Otherwise if the trainer has lost the game
             } else {
+                // Decrement the trainer's score by 50
                 trainer.setScore(trainer.getScore() - 50);
                 // Update score in database 
                 DatabaseManager.updateTrainerScore(connection, trainer.getUsername(), trainer.getScore());
@@ -93,9 +98,10 @@ public class Battle
             System.out.println("No score change for running.");
         }
 
+        // Save trainer data in database 
         SaveManager.saveTrainer(trainer, connection);
 
-        // evolution check
+        // Check the evolution of the starter pokemon
         int prevStage = stageFromScore(startingScore);
         int newStage = stageFromScore(trainer.getScore());
 
@@ -107,9 +113,13 @@ public class Battle
         }
     }
 
-    private int stageFromScore(int score) {
+    private int stageFromScore(int score) 
+    {
+        // If the trainers score is greater than or equal to 1,000, return stage 3
         if (score >= 1000) return 3;
+        // If the trainers score is greater than or equal to 500, return stage 2
         if (score >= 500) return 2;
+        // Else return stage 1
         return 1;
     }
 
@@ -130,15 +140,17 @@ public class Battle
         gameFinished = false;
         ranAway = false;
         
-        // Reset HP of all pokemon for trainer
+        // For all pokemon in the team array of the trainer
         for (Pokemon pokemon : trainer.getTeam())
         {
+            // Reset HP to original HP
             pokemon.setHP(pokemon.getOriginalHP());
         }
         
-        // Reset HP of all pokemon for opponent
+        // For all pokemon in the team array of the opponent
         for (Pokemon pokemon : opponent.getTeam())
         {
+            // Reset HP to original HP
             pokemon.setHP(pokemon.getOriginalHP());
         }
     }

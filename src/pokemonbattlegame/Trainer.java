@@ -10,36 +10,38 @@ import java.util.List;
  *
  * @author dilro
  */
-public class Trainer
+public class Trainer extends Character
 {
     private String username;
-    private String name;
-    private Pokemon starterPokemon;
     private int score;
-    private int level;
     private String challengeMessage;
-    private ArrayList<Pokemon> team;
     
     public Trainer (String username, String name, int score, int level, Pokemon starterPokemon, String challengeMessage)
     {
+        super(name, level);
         this.username = username;
-        this.name = name;
         this.score = score;
-        this.level = level;
-        this.starterPokemon = starterPokemon;
+        this.setStarterPokemon(starterPokemon);
         this.challengeMessage = challengeMessage;
     }
     
     public Trainer(String username, String name, String challengeMessage)
     {
+        super(name, 1);
         this.username = username;
-        this.name = name;
-        this.level = 1;
         this.score = 0;
         this.challengeMessage = challengeMessage;
-        this.team = new ArrayList<>();
+        this.setTeam(new ArrayList<>());
     }
     
+    // Implement dialogue of battle challenge message 
+    @Override 
+    public void speak()
+    {
+        System.out.println(getName() + ": " + challengeMessage);
+    }
+    
+    // Getter and setter methods
     public ArrayList<Pokemon> getTeam()
     {
         return team;
@@ -63,21 +65,6 @@ public class Trainer
     public void setChallengeMessage(String challengeMessage)
     {
         this.challengeMessage = challengeMessage;
-    }
-    
-    public String getName() 
-    {
-        return name;
-    }
-    
-    public int getLevel() 
-    {
-        return level;
-    }
-    
-    public void setLevel(int level) 
-    {
-        this.level = level;
     }
 
     public String getUsername() 

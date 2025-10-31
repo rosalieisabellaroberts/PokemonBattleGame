@@ -78,7 +78,9 @@ public class SetupGame
         System.out.println("Professor Oak: You must be new around here! What is your name?");
         String name = scanner.nextLine().trim();
 
-        this.trainer = new Trainer(username, name, "");
+        this.trainer = new Trainer(username, name, 0, 1, null, "");
+        this.trainer.setTeam(new ArrayList<>());
+        
         System.out.println("Professor Oak: Ah, splendid! A fine name indeed.");
         wait(2);
         System.out.println("Professor Oak: Now, every great journey begins with a choice...");
@@ -134,7 +136,7 @@ public class SetupGame
                     }
                     case 3 -> 
                     {
-                        System.out.println("Professor Oak: Cool choice. Squirtle is truly devoted and fights with style!");
+                        System.out.println("Professor Oak: Cool choice. Squirtle fights with style and will be a loyal companion!");
                         chosenPokemon = "Squirtle";
                         wait(2);
                     }

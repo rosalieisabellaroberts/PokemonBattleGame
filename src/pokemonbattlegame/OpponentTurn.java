@@ -11,37 +11,30 @@ package pokemonbattlegame;
 
 import java.util.*;
 
-public class OpponentTurn 
+// Implements the BattleAction interface which declares the takeTurn() method and returns a BattleResult object
+public class OpponentTurn extends Turn implements BattleAction 
 {
-    private Trainer trainer;
-    private Trainer opponent;
-    private Pokemon trainerCurrentPokemon;
-    private Pokemon opponentCurrentPokemon;
-    private Random random;
 
     public OpponentTurn(Trainer trainer, Trainer opponent,
                         Pokemon trainerCurrentPokemon, Pokemon opponentCurrentPokemon,
-                        Random random) {
-        this.trainer = trainer;
-        this.opponent = opponent;
-        this.trainerCurrentPokemon = trainerCurrentPokemon;
-        this.opponentCurrentPokemon = opponentCurrentPokemon;
-        this.random = random;
+                        java.util.Random random) {
+        super(trainer, opponent, trainerCurrentPokemon, opponentCurrentPokemon, random);
     }
 
-    public OpponentTurnResult takeTurn() throws InterruptedException 
+    @Override
+    public BattleResult takeTurn() throws InterruptedException 
     {
         boolean gameFinished = false;
         boolean trainerWon = false;
 
-        // TO DO: Functionality for trainer's turn (copy, paste and adjust slight details from users loop above
+        // Functionality for trainer's turn (copy, paste and adjust slight details from users loop above
         ArrayList<Move> oppMoves = opponentCurrentPokemon.getMoves();
         
         if(oppMoves == null || oppMoves.isEmpty())
         {
             Thread.sleep(2000);  
             System.out.println(opponentCurrentPokemon.getName() + " has no usable moves!");
-            return new OpponentTurnResult(trainerCurrentPokemon, opponentCurrentPokemon, false, false);
+            return new BattleResult(trainerCurrentPokemon, opponentCurrentPokemon, false, false, false);
         }
                 
         Move oppMove = oppMoves.get(random.nextInt(oppMoves.size()));
@@ -54,39 +47,13 @@ public class OpponentTurn
         double randomAccuracy = random.nextDouble()*100;
         
         if (randomAccuracy <= oppMove.getAccuracy())
-        {
-            pokemonbattlegame.Type atkType = opponentCurrentPokemon.getPokemonType();
-            pokemonbattlegame.Type defType = trainerCurrentPokemon.getPokemonType();
-                    
-            //added multipliers 
-            double typeMult = 1.0;
-            if (TypeEffectiveness.isSuperEffective(atkType, defType))
-            {
-                typeMult = 2.0;
-                Thread.sleep(2000);  
-                System.out.println("It's super effective!");
-            } else if (TypeEffectiveness.isNotVeryEffective(atkType, defType))
-            {
-                typeMult = 0.5;
-                Thread.sleep(2000);  
-                System.out.println("It's not very effective...");
-            }
-                    
-            //crit and random factor
-            boolean crit = random.nextDouble() < 0.0625; //6.25%
-            double critMult = crit ? 1.5 : 1.0;
-            double randMult = 0.85 + (random.nextDouble()*0.15);
-                    
-            int dmg = (int) Math.floor(oppMove.getPower() *typeMult * critMult * randMult);
-            if (dmg < 1) dmg = 1;
-            Thread.sleep(2000);  
-            
-            if (crit) System.out.println("A critical hit!");
-                    
-            int newHP = Math.max(0, trainerCurrentPokemon.getHP() - dmg);
-            trainerCurrentPokemon.setHP(newHP); 
-            System.out.println("It dealt " +dmg+ " damage.");
-            Thread.sleep(2000); 
+        {                    
+            int damage = calculateDamage(oppMove, trainerCurrentPokemon, opponentCurrentPokemon);
+                
+            opponentCurrentPokemon.setHP(Math.max(0, opponentCurrentPokemon.getHP() - damage));
+            Thread.sleep(2000);
+            System.out.println("It dealt " + damage + " damage.");
+            Thread.sleep(2000);
                     
             //if fainted
             if (trainerCurrentPokemon.getHP() <= 0)
@@ -119,7 +86,7 @@ public class OpponentTurn
                     //no pokemon left on your side then opponent wins
                     trainerWon = false;
                     gameFinished = true;
-                    return new OpponentTurnResult(trainerCurrentPokemon, opponentCurrentPokemon, gameFinished, trainerWon);
+                    return new BattleResult(trainerCurrentPokemon, opponentCurrentPokemon, gameFinished, trainerWon, false);
                 } 
             }
         }
@@ -133,7 +100,7 @@ public class OpponentTurn
         DisplayGameDetails gameDetails = new DisplayGameDetails();
         gameDetails.displayGameDetails(trainer, opponent);
         
-        return new OpponentTurnResult(trainerCurrentPokemon, opponentCurrentPokemon, gameFinished, trainerWon);
+        return new BattleResult(trainerCurrentPokemon, opponentCurrentPokemon, gameFinished, trainerWon, false);
     }
 }
 

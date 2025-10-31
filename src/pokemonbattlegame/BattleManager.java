@@ -46,7 +46,7 @@ public class BattleManager
             generatedPokemonTeams.setPokemons(DatabaseManager.getPokemonList().toArray(new Pokemon[0]));
             generatedPokemonTeams.generatePokemonTeams(game.getTrainer(), game.getOpponent(), connection);
 
-            System.out.println(game.getOpponent().getName()+": "+game.getOpponent().getChallengeMessage());
+            game.getOpponent().speak();
             Thread.sleep(2000);
 
             // Display game details

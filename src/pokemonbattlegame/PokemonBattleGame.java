@@ -68,6 +68,7 @@ public class PokemonBattleGame
              // Load the effectiveness of all the types 
             game.setTypes(DatabaseManager.loadTypesWithEffectiveness(connection));
             
+            // Save the trainer data into the database 
             SaveManager.saveTrainer(trainer, connection);
 
             // Prompt user for start 

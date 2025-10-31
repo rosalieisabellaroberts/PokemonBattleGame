@@ -1010,13 +1010,15 @@ public class DatabaseManager
     public static Trainer getTrainer(String username, Connection connection) 
     {
         Trainer trainer = null;
-        String sql = "SELECT username, name, challengeMessage, score, level, starterPokemon, challengeMessage FROM Trainers WHERE username = ?";
+        String sql = "SELECT username, name, score, level, starterPokemon, challengeMessage FROM Trainers WHERE username = ?";
 
+        
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) 
         {
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
 
+            
             if (resultSet.next()) 
             {
                 Pokemon starter = getPokemon(connection, resultSet.getString("starterPokemon"));

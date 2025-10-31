@@ -12,28 +12,19 @@ package pokemonbattlegame;
 
 import java.util.*;
 
-public class TrainerTurn 
+// Implements the BattleAction interface which declares the takeTurn() method and returns a BattleResult object
+public class TrainerTurn extends Turn implements BattleAction 
 {
-    private Trainer trainer;
-    private Trainer opponent;
-    private Pokemon trainerCurrentPokemon;
-    private Pokemon opponentCurrentPokemon;
-    private Scanner scanner;
-    private Random random;
-
     public TrainerTurn(Trainer trainer, Trainer opponent, 
                        Pokemon trainerCurrentPokemon, Pokemon opponentCurrentPokemon,
                        Scanner scanner, Random random) 
     {
-        this.trainer = trainer;
-        this.opponent = opponent;
-        this.trainerCurrentPokemon = trainerCurrentPokemon;
-        this.opponentCurrentPokemon = opponentCurrentPokemon;
+        super(trainer, opponent, trainerCurrentPokemon, opponentCurrentPokemon, random);
         this.scanner = scanner;
-        this.random = random;
     }
 
-    public TrainerTurnResult takeTurn() throws InterruptedException {
+    @Override
+    public BattleResult takeTurn() throws InterruptedException {
     boolean gameFinished = false;
     boolean trainerWon = false;
     boolean ranAway = false;
@@ -66,34 +57,14 @@ public class TrainerTurn
 
             randomAccuracy = random.nextDouble() * 100;
             if (randomAccuracy <= selectedMove.getAccuracy()) {
-                Type atkType = trainerCurrentPokemon.getPokemonType();
-                Type defType = opponentCurrentPokemon.getPokemonType();
-
-                double typeMult = 1.0;
-                if (TypeEffectiveness.isSuperEffective(atkType, defType)) {
-                    typeMult = 2.0;
-                    Thread.sleep(2000);
-                    System.out.println("It's super effective!");
-                } else if (TypeEffectiveness.isNotVeryEffective(atkType, defType)) {
-                    typeMult = 0.5;
-                    Thread.sleep(2000);
-                    System.out.println("It's not very effective...");
-                }
-
-                boolean crit = random.nextDouble() < 0.0625;
-                double critMult = crit ? 1.5 : 1.0;
-                double randMult = 0.85 + (random.nextDouble() * 0.15);
-
-                int dmg = (int) Math.floor(selectedMove.getPower() * typeMult * critMult * randMult);
-                if (dmg < 1) dmg = 1;
-                if (crit) System.out.println("A critical hit!");
-
-                int newHP = Math.max(0, opponentCurrentPokemon.getHP() - dmg);
-                opponentCurrentPokemon.setHP(newHP);
+                
+                int damage = calculateDamage(selectedMove, trainerCurrentPokemon, opponentCurrentPokemon);
+                
+                opponentCurrentPokemon.setHP(Math.max(0, opponentCurrentPokemon.getHP() - damage));
                 Thread.sleep(2000);
-                System.out.println("It dealt " + dmg + " damage.");
+                System.out.println("It dealt " + damage + " damage.");
                 Thread.sleep(2000);
-
+                
                 if (opponentCurrentPokemon.getHP() <= 0) {
                     System.out.println(opponentCurrentPokemon.getName() + " fainted!");
                     Thread.sleep(2000);
@@ -144,7 +115,7 @@ public class TrainerTurn
             gameFinished = true;
             break;
         }
-        return new TrainerTurnResult(trainerCurrentPokemon, opponentCurrentPokemon, gameFinished, trainerWon, ranAway);
+        return new BattleResult(trainerCurrentPokemon, opponentCurrentPokemon, gameFinished, trainerWon, ranAway);
     }
     
     private void handleTrainerSwitch() 
@@ -253,12 +224,15 @@ public class TrainerTurn
                 // Try to parse input 
                 input = Integer.parseInt(line.trim());
                 
+                // If input is within range 
                 if (input >= min && input <= max)
                 {
+                    // Return input
                     return input;
                 }
                 else
                 {
+                    // Return error message
                     System.out.println("Please enter a digit between "+ min +" and " + max + "...");
                 }
             } catch (NumberFormatException e)
