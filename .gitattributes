@@ -1,0 +1,15 @@
+# Treat all text files as text and normalize line endings
+* text=auto
+
+# Force Java and XML files to use LF line endings
+*.java text eol=lf
+*.xml text eol=lf
+*.xmp text eol=lf
+
+# Binary files should not be modified by Git
+*.jpg binary
+*.png binary
+*.gif binary
+*.jar binary
+*.class binary
+*.exe binary

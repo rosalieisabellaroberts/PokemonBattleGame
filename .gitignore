@@ -1,4 +1,33 @@
-build/ 
-dist/ 
-*.class 
-*.jar 
+# NetBeans IDE specific
+nbproject/private/   # user-specific NetBeans settings
+build/               # compiled classes
+dist/                # distribution files (jars, wars)
+nbbuild/
+.nb-gradle/
+
+# Java compiled files
+*.class
+
+# Java archives
+*.jar
+*.war
+*.ear
+
+# Log files
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Temporary and editor files
+*.tmp
+*.swp
+*.bak
+
+# Ignore libraries if you don't want to track them
+lib/
+
+# Ignore Eclipse/IntelliJ specific (optional)
+*.iml
+*.idea/
