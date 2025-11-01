@@ -24,4 +24,30 @@ public class BattleResult
         this.trainerWon = won;
         this.ranAway = ran;
     }
+
+     // Getter and setter methods 
+    public Pokemon getTrainerPokemon()
+    {
+        return updatedTrainerPokemon;
+    }
+    
+    public Pokemon getOpponentPokemon()
+    {
+        return updatedOpponentPokemon;
+    }
+    
+    public boolean getGameFinished()
+    {
+        return gameFinished;
+    }
+    
+    public boolean getTrainerWon()
+    {
+        return trainerWon;
+    }
+    
+    public boolean getRanAway()
+    {
+        return ranAway;
+    }
 }

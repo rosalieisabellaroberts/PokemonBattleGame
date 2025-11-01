@@ -54,10 +54,9 @@ public class TrainerTurn extends Turn implements BattleAction
             Move selectedMove = moves.get(moveSelection - 1);
             System.out.println("\n" + trainerCurrentPokemon.getName() + " used " + selectedMove.getName() + "!");
             Thread.sleep(2000);
-
-            randomAccuracy = random.nextDouble() * 100;
-            if (randomAccuracy <= selectedMove.getAccuracy()) {
-                
+            
+            if (moveHit(selectedMove, random)) 
+            {
                 int damage = calculateDamage(selectedMove, trainerCurrentPokemon, opponentCurrentPokemon);
                 
                 opponentCurrentPokemon.setHP(Math.max(0, opponentCurrentPokemon.getHP() - damage));
@@ -89,7 +88,6 @@ public class TrainerTurn extends Turn implements BattleAction
                         break;
                     }
                 }
-
             } else {
                 System.out.println(trainerCurrentPokemon.getName() + " missed!");
                 Thread.sleep(2000);

@@ -22,6 +22,8 @@ public class Trainer extends Character
         this.username = username;
         this.score = score;
         this.setStarterPokemon(starterPokemon);
+        this.team = new ArrayList<>();
+        this.team.add(starterPokemon);
         this.challengeMessage = challengeMessage;
     }
     

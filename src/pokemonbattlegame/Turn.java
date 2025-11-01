@@ -4,6 +4,7 @@
  */
 package pokemonbattlegame;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -28,6 +29,12 @@ public abstract class Turn implements BattleAction
         this.opponentCurrentPokemon = opponentCurrentPokemon;
         this.random = random;
     }
+    
+    // Check if move hit 
+    public static boolean moveHit(Move move, Random random) 
+    {
+        return random.nextDouble() * 100 <= move.getAccuracy();
+    }   
     
     // Calculate damage for turn 
     protected int calculateDamage(Move move, Pokemon atkPokemon, Pokemon defPokemon) throws InterruptedException

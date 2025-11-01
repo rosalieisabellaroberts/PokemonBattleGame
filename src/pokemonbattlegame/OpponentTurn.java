@@ -42,11 +42,8 @@ public class OpponentTurn extends Turn implements BattleAction
         Thread.sleep(2000);  
         System.out.println("\n"+opponentCurrentPokemon.getName() + " used " + oppMove.getName() + "!");
         Thread.sleep(2000);  
-                
-        //accuracy check
-        double randomAccuracy = random.nextDouble()*100;
         
-        if (randomAccuracy <= oppMove.getAccuracy())
+        if (moveHit(oppMove, random))
         {                    
             int damage = calculateDamage(oppMove, trainerCurrentPokemon, opponentCurrentPokemon);
                 
@@ -55,7 +52,7 @@ public class OpponentTurn extends Turn implements BattleAction
             System.out.println("It dealt " + damage + " damage.");
             Thread.sleep(2000);
                     
-            //if fainted
+            // If pokemon fainteds
             if (trainerCurrentPokemon.getHP() <= 0)
             {
                 Thread.sleep(2000);  
