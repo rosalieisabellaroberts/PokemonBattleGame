@@ -51,6 +51,7 @@ public class DatabaseManager
                     "type VARCHAR(50)," +
                     "HP INT," +
                     "originalHP INT," +
+                    "imagePath VARCHAR(255)," +
                     "FOREIGN KEY (type) REFERENCES Types(typeName))");
             }
             
@@ -157,114 +158,114 @@ public class DatabaseManager
         List<Pokemon> pokemons = new ArrayList<>();
         
         // Pokemon data
-        pokemons.add(new Pokemon("Bulbasaur", new Type("Grass"), 45, new ArrayList<>()));
-        pokemons.add(new Pokemon("Ivysaur", new Type("Grass"), 60, new ArrayList<>()));
-        pokemons.add(new Pokemon("Venusaur", new Type("Grass"), 80, new ArrayList<>()));
+        pokemons.add(new Pokemon("Bulbasaur", new Type("Grass"), 45, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Ivysaur", new Type("Grass"), 60, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Venusaur", new Type("Grass"), 80, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Charmander", new Type("Fire"), 39, new ArrayList<>()));
-        pokemons.add(new Pokemon("Charmeleon", new Type("Fire"), 58, new ArrayList<>()));
-        pokemons.add(new Pokemon("Charizard", new Type("Fire"), 78, new ArrayList<>()));
+        pokemons.add(new Pokemon("Charmander", new Type("Fire"), 39, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Charmeleon", new Type("Fire"), 58, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Charizard", new Type("Fire"), 78, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Squirtle", new Type("Water"), 44, new ArrayList<>()));
-        pokemons.add(new Pokemon("Wartortle", new Type("Water"), 59, new ArrayList<>()));
-        pokemons.add(new Pokemon("Blastoise", new Type("Water"), 79, new ArrayList<>()));
+        pokemons.add(new Pokemon("Squirtle", new Type("Water"), 44, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Wartortle", new Type("Water"), 59, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Blastoise", new Type("Water"), 79, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Caterpie", new Type("Bug"), 45, new ArrayList<>()));
-        pokemons.add(new Pokemon("Metapod", new Type("Bug"), 50, new ArrayList<>()));
-        pokemons.add(new Pokemon("Butterfree", new Type("Bug"), 60, new ArrayList<>()));
+        pokemons.add(new Pokemon("Caterpie", new Type("Bug"), 45, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Metapod", new Type("Bug"), 50, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Butterfree", new Type("Bug"), 60, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Pikachu", new Type("Electric"), 35, new ArrayList<>()));
-        pokemons.add(new Pokemon("Raichu", new Type("Electric"), 60, new ArrayList<>()));
+        pokemons.add(new Pokemon("Pikachu", new Type("Electric"), 35, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Raichu", new Type("Electric"), 60, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Jigglypuff", new Type("Normal"), 115, new ArrayList<>()));
-        pokemons.add(new Pokemon("Wigglytuff", new Type("Normal"), 140, new ArrayList<>()));
+        pokemons.add(new Pokemon("Jigglypuff", new Type("Normal"), 115, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Wigglytuff", new Type("Normal"), 140, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Meowth", new Type("Normal"), 40, new ArrayList<>()));
-        pokemons.add(new Pokemon("Persian", new Type("Normal"), 65, new ArrayList<>()));
+        pokemons.add(new Pokemon("Meowth", new Type("Normal"), 40, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Persian", new Type("Normal"), 65, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Psyduck", new Type("Water"), 50, new ArrayList<>()));
-        pokemons.add(new Pokemon("Golduck", new Type("Water"), 80, new ArrayList<>()));
+        pokemons.add(new Pokemon("Psyduck", new Type("Water"), 50, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Golduck", new Type("Water"), 80, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Machop", new Type("Fighting"), 70, new ArrayList<>()));
-        pokemons.add(new Pokemon("Machoke", new Type("Fighting"), 80, new ArrayList<>()));
-        pokemons.add(new Pokemon("Machamp", new Type("Fighting"), 90, new ArrayList<>()));
+        pokemons.add(new Pokemon("Machop", new Type("Fighting"), 70, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Machoke", new Type("Fighting"), 80, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Machamp", new Type("Fighting"), 90, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Geodude", new Type("Rock"), 40, new ArrayList<>()));
-        pokemons.add(new Pokemon("Graveler", new Type("Rock"), 55, new ArrayList<>()));
-        pokemons.add(new Pokemon("Golem", new Type("Rock"), 80, new ArrayList<>()));
+        pokemons.add(new Pokemon("Geodude", new Type("Rock"), 40, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Graveler", new Type("Rock"), 55, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Golem", new Type("Rock"), 80, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Abra", new Type("Psychic"), 25, new ArrayList<>()));
-        pokemons.add(new Pokemon("Kadabra", new Type("Psychic"), 40, new ArrayList<>()));
-        pokemons.add(new Pokemon("Alakazam", new Type("Psychic"), 55, new ArrayList<>()));
+        pokemons.add(new Pokemon("Abra", new Type("Psychic"), 25, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Kadabra", new Type("Psychic"), 40, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Alakazam", new Type("Psychic"), 55, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Gastly", new Type("Ghost"), 30, new ArrayList<>()));
-        pokemons.add(new Pokemon("Haunter", new Type("Ghost"), 45, new ArrayList<>()));
-        pokemons.add(new Pokemon("Gengar", new Type("Ghost"), 60, new ArrayList<>()));
+        pokemons.add(new Pokemon("Gastly", new Type("Ghost"), 30, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Haunter", new Type("Ghost"), 45, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Gengar", new Type("Ghost"), 60, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Onix", new Type("Rock"), 35, new ArrayList<>()));
+        pokemons.add(new Pokemon("Onix", new Type("Rock"), 35, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Magikarp", new Type("Water"), 20, new ArrayList<>()));
-        pokemons.add(new Pokemon("Gyarados", new Type("Water"), 95, new ArrayList<>()));
+        pokemons.add(new Pokemon("Magikarp", new Type("Water"), 20, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Gyarados", new Type("Water"), 95, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Eevee", new Type("Normal"), 55, new ArrayList<>()));
-        pokemons.add(new Pokemon("Vaporeon", new Type("Water"), 130, new ArrayList<>()));
-        pokemons.add(new Pokemon("Jolteon", new Type("Electric"), 65, new ArrayList<>()));
-        pokemons.add(new Pokemon("Flareon", new Type("Fire"), 65, new ArrayList<>()));
+        pokemons.add(new Pokemon("Eevee", new Type("Normal"), 55, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Vaporeon", new Type("Water"), 130, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Jolteon", new Type("Electric"), 65, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Flareon", new Type("Fire"), 65, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Snorlax", new Type("Normal"), 160, new ArrayList<>()));
+        pokemons.add(new Pokemon("Snorlax", new Type("Normal"), 160, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
-        pokemons.add(new Pokemon("Mewtwo", new Type("Psychic"), 106, new ArrayList<>()));
-        pokemons.add(new Pokemon("Mew", new Type("Psychic"), 100, new ArrayList<>()));
+        pokemons.add(new Pokemon("Mewtwo", new Type("Psychic"), 106, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Mew", new Type("Psychic"), 100, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
         
-        pokemons.add(new Pokemon("Blaziken", new Type("Fire"), 180, new ArrayList<>()));
-        pokemons.add(new Pokemon("Infernape", new Type("Fire"), 176, new ArrayList<>()));
-        pokemons.add(new Pokemon("Lucario", new Type("Fighting"), 170, new ArrayList<>()));
-        pokemons.add(new Pokemon("Garchomp", new Type("Dragon"), 108, new ArrayList<>()));
-        pokemons.add(new Pokemon("Hydreigon", new Type("Dark"), 192, new ArrayList<>()));
-        pokemons.add(new Pokemon("Metagross", new Type("Steel"), 180, new ArrayList<>()));
-        pokemons.add(new Pokemon("Excadrill", new Type("Ground"), 110, new ArrayList<>()));
-        pokemons.add(new Pokemon("Togekiss", new Type("Fairy"), 185, new ArrayList<>()));
-        pokemons.add(new Pokemon("Salamence", new Type("Dragon"), 195, new ArrayList<>()));
-        pokemons.add(new Pokemon("Tyranitar", new Type("Rock"), 100, new ArrayList<>()));
-        pokemons.add(new Pokemon("Volcarona", new Type("Bug"), 185, new ArrayList<>()));
-        pokemons.add(new Pokemon("Dragonite", new Type("Dragon"), 191, new ArrayList<>()));
-        pokemons.add(new Pokemon("Tyrantrum", new Type("Rock"), 190, new ArrayList<>()));
-        pokemons.add(new Pokemon("Kyogre", new Type("Water"), 100, new ArrayList<>()));
-        pokemons.add(new Pokemon("Groudon", new Type("Ground"), 100, new ArrayList<>()));
-        pokemons.add(new Pokemon("Rayquaza", new Type("Dragon"), 105, new ArrayList<>()));
-        pokemons.add(new Pokemon("Zygarde", new Type("Dragon"), 100, new ArrayList<>()));
-        pokemons.add(new Pokemon("Arceus", new Type("Normal"), 120, new ArrayList<>()));
-        pokemons.add(new Pokemon("Zekrom", new Type("Electric"), 100, new ArrayList<>()));
-        pokemons.add(new Pokemon("Reshiram", new Type("Fire"), 100, new ArrayList<>()));
-        pokemons.add(new Pokemon("Kyurem", new Type("Ice"), 125, new ArrayList<>()));
-        pokemons.add(new Pokemon("Darkrai", new Type("Dark"), 170, new ArrayList<>()));
-        pokemons.add(new Pokemon("Cobalion", new Type("Steel"), 191, new ArrayList<>()));
-        pokemons.add(new Pokemon("Terrakion", new Type("Rock"), 191, new ArrayList<>()));
-        pokemons.add(new Pokemon("Virizion", new Type("Grass"), 191, new ArrayList<>()));
-        pokemons.add(new Pokemon("Keldeo", new Type("Water"), 191, new ArrayList<>()));
-        pokemons.add(new Pokemon("Giratina", new Type("Ghost"), 150, new ArrayList<>()));
-        pokemons.add(new Pokemon("Dialga", new Type("Steel"), 100, new ArrayList<>()));
-        pokemons.add(new Pokemon("Palkia", new Type("Water"), 190, new ArrayList<>()));
-        pokemons.add(new Pokemon("Heatran", new Type("Fire"), 191, new ArrayList<>()));
-        pokemons.add(new Pokemon("Landorus", new Type("Ground"), 189, new ArrayList<>()));
-        pokemons.add(new Pokemon("Tornadus", new Type("Flying"), 179, new ArrayList<>()));
-        pokemons.add(new Pokemon("Thundurus", new Type("Electric"), 179, new ArrayList<>()));
-        pokemons.add(new Pokemon("Goodra", new Type("Dragon"), 190, new ArrayList<>()));
-        pokemons.add(new Pokemon("Dragapult", new Type("Dragon"), 188, new ArrayList<>()));
-        pokemons.add(new Pokemon("Zeraora", new Type("Electric"), 188, new ArrayList<>()));
-        pokemons.add(new Pokemon("Calyrex", new Type("Psychic"), 100, new ArrayList<>()));
-        pokemons.add(new Pokemon("Glastrier", new Type("Ice"), 100, new ArrayList<>()));
-        pokemons.add(new Pokemon("Spectrier", new Type("Ghost"), 100, new ArrayList<>()));
-        pokemons.add(new Pokemon("Regieleki", new Type("Electric"), 180, new ArrayList<>()));
-        pokemons.add(new Pokemon("Regidrago", new Type("Dragon"), 100, new ArrayList<>()));
-        pokemons.add(new Pokemon("Chi-Yu", new Type("Fire"), 185, new ArrayList<>()));
-        pokemons.add(new Pokemon("Roserade", new Type("Grass"), 175, new ArrayList<>()));
-        pokemons.add(new Pokemon("Darmanitan", new Type("Fire"), 105, new ArrayList<>()));
-        pokemons.add(new Pokemon("Camerupt", new Type("Fire"), 170, new ArrayList<>()));
-        pokemons.add(new Pokemon("Kommo-o", new Type("Dragon"), 175, new ArrayList<>()));
-        pokemons.add(new Pokemon("Volcanion", new Type("Fire"), 180, new ArrayList<>()));
-        pokemons.add(new Pokemon("Magnezone", new Type("Electric"), 170, new ArrayList<>()));
-        pokemons.add(new Pokemon("Golisopod", new Type("Bug"), 175, new ArrayList<>()));
+        pokemons.add(new Pokemon("Blaziken", new Type("Fire"), 180, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Infernape", new Type("Fire"), 176, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Lucario", new Type("Fighting"), 170, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Garchomp", new Type("Dragon"), 108, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Hydreigon", new Type("Dark"), 192, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Metagross", new Type("Steel"), 180, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Excadrill", new Type("Ground"), 110, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Togekiss", new Type("Fairy"), 185, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Salamence", new Type("Dragon"), 195, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Tyranitar", new Type("Rock"), 100, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Volcarona", new Type("Bug"), 185, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Dragonite", new Type("Dragon"), 191, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Tyrantrum", new Type("Rock"), 190, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Kyogre", new Type("Water"), 100, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Groudon", new Type("Ground"), 100, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Rayquaza", new Type("Dragon"), 105, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Zygarde", new Type("Dragon"), 100, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Arceus", new Type("Normal"), 120, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Zekrom", new Type("Electric"), 100, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Reshiram", new Type("Fire"), 100, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Kyurem", new Type("Ice"), 125, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Darkrai", new Type("Dark"), 170, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Cobalion", new Type("Steel"), 191, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Terrakion", new Type("Rock"), 191, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Virizion", new Type("Grass"), 191, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Keldeo", new Type("Water"), 191, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Giratina", new Type("Ghost"), 150, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Dialga", new Type("Steel"), 100, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Palkia", new Type("Water"), 190, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Heatran", new Type("Fire"), 191, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Landorus", new Type("Ground"), 189, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Tornadus", new Type("Flying"), 179, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Thundurus", new Type("Electric"), 179, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Goodra", new Type("Dragon"), 190, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Dragapult", new Type("Dragon"), 188, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Zeraora", new Type("Electric"), 188, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Calyrex", new Type("Psychic"), 100, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Glastrier", new Type("Ice"), 100, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Spectrier", new Type("Ghost"), 100, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Regieleki", new Type("Electric"), 180, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Regidrago", new Type("Dragon"), 100, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Chi-Yu", new Type("Fire"), 185, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Roserade", new Type("Grass"), 175, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Darmanitan", new Type("Fire"), 105, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Camerupt", new Type("Fire"), 170, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Kommo-o", new Type("Dragon"), 175, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Volcanion", new Type("Fire"), 180, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Magnezone", new Type("Electric"), 170, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
+        pokemons.add(new Pokemon("Golisopod", new Type("Bug"), 175, new ArrayList<>(), "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png"));
 
         // Return list of Pokemon Objects 
         return pokemons;
@@ -290,7 +291,7 @@ public class DatabaseManager
         
         try
         {
-            String sql = "INSERT INTO Pokemon (name, type, HP, originalHP) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO Pokemon (name, type, HP, originalHP, imagePath) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
         
             for (Pokemon p : pokemons) 
@@ -299,6 +300,7 @@ public class DatabaseManager
                 preparedStatement.setString(2, p.getPokemonType().getName());
                 preparedStatement.setInt(3, p.getHP());
                 preparedStatement.setInt(4, p.getOriginalHP());
+                preparedStatement.setString(5, p.getImagePath());
 
                 try
                 {
@@ -1061,7 +1063,8 @@ public class DatabaseManager
                     resultSet.getString("name"),
                     TypeStorage.getTypeByName(resultSet.getString("type")),
                     resultSet.getInt("HP"),
-                    new ArrayList<>()
+                    new ArrayList<>(),
+                    resultSet.getString("imagePath")
                 );
                 
                 loadPokemonMoves(connection, pokemon);
@@ -1103,11 +1106,12 @@ public class DatabaseManager
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             
-            // While the result set has another item 
+            // Loop through each row in the resultSet
             while (resultSet.next())
             {
-                // Add the type name to the types array as a pokemon type
+                // Create a new type object for each typeName retrieved
                 Type type = new Type(resultSet.getString("typeName"));
+                // Add the created type to the list
                 types.add(type);
             }
         } catch (SQLException e)
@@ -1118,16 +1122,20 @@ public class DatabaseManager
         // Link the strongAgainst types 
         try
         {
-            // Query the type name of all strongAgainst types in the strengths table
+            // Query the type name of all strongAgainst relationships in the strengths table
             String sql = "SELECT typeName, strongAgainst FROM Strengths";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             
+            // Loop through each row in the result set (relationship between two types)
             while (resultSet.next())
             {
+                // Save the attacking type into a type object
                 Type type = findType(types, resultSet.getString("typeName"));
+                // Save the defending type into another type object 
                 Type strongAgainst = findType(types, resultSet.getString("strongAgainst"));
                 
+                // If both of the types exists, set the strongAgainst relationship
                 if (type != null && strongAgainst != null)
                 {
                     type.setStrongAgainst(strongAgainst);
@@ -1141,16 +1149,20 @@ public class DatabaseManager
         // Link the weakAgainst types 
         try
         {
-            // Query the type name of all weakAgainst types in the weaknesses table
+            // Query the type name of all weakAgainst relationships in the weaknesses table
             String sql = "SELECT typeName, weakAgainst FROM Weaknesses";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             
+            // Loop through each row in the result set (relationship between two types)
             while (resultSet.next())
             {
+                // Save the attacking type into a type object
                 Type type = findType(types, resultSet.getString("typeName"));
+                // Save the defending type into another type object 
                 Type weakAgainst = findType(types, resultSet.getString("weakAgainst"));
                 
+                // If both of the types exists, set the strongAgainst relationship
                 if (type != null && weakAgainst != null)
                 {
                     type.setWeakAgainst(weakAgainst);

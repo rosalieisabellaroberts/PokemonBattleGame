@@ -16,16 +16,19 @@ public class Pokemon
     private int HP;
     private int originalHP;
     private ArrayList<Move> moves;
+    private String imagePath;
     
-    public Pokemon(String name, Type type, int HP, ArrayList<Move> moves)
+    public Pokemon(String name, Type type, int HP, ArrayList<Move> moves, String imagePath)
     {
        this.name = name;
        this.type = type;
        this.HP = HP;
        this.originalHP = HP;
        this.moves = moves;
+       this.imagePath = imagePath;
     }
     
+    // Getter and setter methods
     public String getName()
     {
         return name;
@@ -68,5 +71,15 @@ public class Pokemon
     public void setMoves(ArrayList<Move> moves) 
     {
         this.moves = moves;
+    }
+    
+    public String getImagePath()
+    {
+        return imagePath; 
+    }
+    
+    public void setImagePath(String imagePath)
+    {
+        this.imagePath = imagePath;
     }
 }

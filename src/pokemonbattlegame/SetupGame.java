@@ -15,19 +15,24 @@ public class SetupGame
 {
     private Pokemon[] pokemons;
     private Trainer trainer;
+    private SetupGUI gui;
+    private String lastUserInput;
 
     public Trainer run(Connection connection) 
     {
-        Scanner scanner = new Scanner(System.in);
+        printMessage("Professor Oak: Hello there! Welcome to the world of Pokemon!");
+        wait(2);
+        printMessage("My name is Oak! People call me the Pokemon Prof!");
+        wait(2);
+        printMessage("This world is inhabited by creatures called Pokemon!"); 
+        wait(2);
+        printMessage("For some people, Pokemon are pets. Others use them for fights."); 
+        wait(2);
+        printMessage("Myself...I study Pokemon as a profession."); 
+        wait(2);      
+        printMessage("\nProfessor Oak: What is your username, Trainer? ");
 
-        System.out.println("Professor Oak: Hello there! Welcome to the world of Pokemon! "
-                + "My name is Oak! People call me the Pokemon Prof! This world "
-                + "is inhabited by creatures called Pokemon! For some people, "
-                + "Pokemon are pets. Others use them for fights. Myself... I study "
-                + "Pokemon as a profession.");
-        System.out.println("Professor Oak: What is your username, Trainer? ");
-
-        String username = scanner.nextLine().trim();
+        String username = getUserInput();
 
         // Try to load the trainer from the database 
         this.trainer = DatabaseManager.getTrainer(username, connection);
@@ -38,7 +43,7 @@ public class SetupGame
         // If the list is empty, return an error message 
         if(pokemonList.isEmpty())
         {
-            System.out.println("Professor Oak: I couldn't find any pokemon in this Pokedex!");
+            printMessage("Professor Oak: I couldn't find any pokemon in this Pokedex!");
             wait(2);
         }
         // Populate the pokemons array with the values from the database pokemon list 
@@ -48,7 +53,7 @@ public class SetupGame
         if (this.trainer != null) 
         {
             // Print welcome message 
-            System.out.println("Professor Oak: Welcome back " + trainer.getName() + "! Your score is: " + trainer.getScore());
+            printMessage("Professor Oak: Welcome back " + trainer.getName() + "! Your score is: " + trainer.getScore());
             return this.trainer;
         }
         
@@ -57,14 +62,14 @@ public class SetupGame
         {
             try 
             {
-                createNewTrainer(username, scanner);
+                createNewTrainer(username);
                    
                 // Save new trainer into the database
                 SaveManager.saveTrainer(this.trainer, connection);
                    
             } catch (Exception e)
             {
-                System.out.println("Professor Oak: Oooops..." + e.getMessage());
+                printMessage("Professor Oak: Oooops..." + e.getMessage());
                 e.printStackTrace();
             }       
         }  
@@ -73,17 +78,17 @@ public class SetupGame
         
     }
 
-    private void createNewTrainer(String username, Scanner scanner)
+    private void createNewTrainer(String username)
     {
-        System.out.println("Professor Oak: You must be new around here! What is your name?");
-        String name = scanner.nextLine().trim();
+        printMessage("Professor Oak: You must be new around here! What is your name?");
+        String name = getUserInput();
 
         this.trainer = new Trainer(username, name, 0, 1, null, "");
         this.trainer.setTeam(new ArrayList<>());
         
-        System.out.println("Professor Oak: Ah, splendid! A fine name indeed.");
+        printMessage("Professor Oak: Ah, splendid! A fine name indeed.");
         wait(2);
-        System.out.println("Professor Oak: Now, every great journey begins with a choice...");
+        printMessage("Professor Oak: Now, every great journey begins with a choice...");
         wait(2);
 
         boolean pokemonChosen = false;
@@ -93,50 +98,55 @@ public class SetupGame
         {
             if (!pikachuUnlocked)
             {
-                System.out.println("\n(1) Bulbasaur: A steadfast grass-type pokemon that grows stronger with every challenge");
+                printMessage("\n(1) Bulbasaur: A steadfast grass-type pokemon that grows stronger with every challenge");
+                revealPokemonPokeball(0, "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\bulbasaur.png");
                 wait(2);
-                System.out.println("(2) Charmander: A spirited fire-type pokemon with passion that burns bright");
+                printMessage("(2) Charmander: A spirited fire-type pokemon with passion that burns bright");
+                revealPokemonPokeball(1, "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\charmander.png");
                 wait(2);
-                System.out.println("(3) Squirtle: A loyal water-type pokemon that stays cool under pressure");
+                printMessage("(3) Squirtle: A loyal water-type pokemon that stays cool under pressure");
+                revealPokemonPokeball(2, "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\squirtle.png");
                 wait(2);
-                System.out.println("(4) None of these will do...");
+                printMessage("(4) None of these will do...");
                 wait(2);
-                System.out.println("\nProfessor Oak: Which Pokemon will you choose? Enter a digit between 1-4...");
+                printMessage("\nProfessor Oak: Which Pokemon will you choose? Enter a digit between 1-4...");
             }
             else 
             {
-                System.out.println("\n(1) Bulbasaur: A steadfast grass-type pokemon that grows stronger with every challenge");
+                printMessage("\n(1) Bulbasaur: A steadfast grass-type pokemon that grows stronger with every challenge");
                 wait(2);
-                System.out.println("(2) Charmander: A spirited fire-type pokemon with passion that burns bright");
+                printMessage("(2) Charmander: A spirited fire-type pokemon with passion that burns bright");
                 wait(2);
-                System.out.println("(3) Squirtle: A loyal water-type pokemon that stays cool under pressure");
+                printMessage("(3) Squirtle: A loyal water-type pokemon that stays cool under pressure");
                 wait(2);
-                System.out.println("(4) Pikachu: A speedy electric-type pokemon with a sparky attitude");
+                printMessage("(4) Pikachu: A speedy electric-type pokemon with a sparky attitude");
+                revealPokemonPokeball(3, "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\pikachu.png");
+                gui.enablePikachuImage();
                 wait(2);
-                System.out.println("\nProfessor Oak: Which Pokemon will you choose? Enter a digit between 1-4...");
+                printMessage("\nProfessor Oak: Which Pokemon will you choose? Enter a digit between 1-4...");
             }                
             try 
             {
-                int selection = Integer.parseInt(scanner.nextLine().trim());
+                int selection = Integer.parseInt(getUserInput());
                 String chosenPokemon = null;
 
                 switch (selection) 
                 {
                     case 1 -> 
                     {
-                        System.out.println("Professor Oak: Wise choice. Bulbasaur will be a reliable partner in battle!");
+                        printMessage("Professor Oak: Wise choice. Bulbasaur will be a reliable partner in battle!");
                         chosenPokemon = "Bulbasaur";
                         wait(2);
                     }
                     case 2 -> 
                     {
-                        System.out.println("Professor Oak: Bold choice. Charmander is fiercy determined and never backs down!");
+                        printMessage("Professor Oak: Bold choice. Charmander is fiercy determined and never backs down!");
                         chosenPokemon = "Charmander";
                         wait(2);
                     }
                     case 3 -> 
                     {
-                        System.out.println("Professor Oak: Cool choice. Squirtle fights with style and will be a loyal companion!");
+                        printMessage("Professor Oak: Cool choice. Squirtle fights with style and will be a loyal companion!");
                         chosenPokemon = "Squirtle";
                         wait(2);
                     }
@@ -144,20 +154,20 @@ public class SetupGame
                     {
                         if (!pikachuUnlocked)
                         {
-                            System.out.println("Professor Oak: Wait a second!");
+                            printMessage("Professor Oak: Wait a second!");
                             wait(2);
-                            System.out.println("Professor Oak: I do have another pokemon back at my lab, but I must warn you-");
+                            printMessage("Professor Oak: I do have another pokemon back at my lab, but I must warn you-");
                             wait(2);
-                            System.out.println("Professor Oak: It's incredibly stubborn and almost impossible to train.");
+                            printMessage("Professor Oak: It's incredibly stubborn and almost impossible to train.");
                             wait(2);
-                            System.out.println("Professor Oak: But if you persevere, it could be a truly powerful partner!");
+                            printMessage("Professor Oak: But if you persevere, it could be a truly powerful partner!");
                             wait(2);
                        
                             pikachuUnlocked = true;
                             continue;   
                         } else
                         {
-                            System.out.println("Professor Oak: So you want Pikachu eh? Goodluck trainer...");
+                            printMessage("Professor Oak: So you want Pikachu eh? Goodluck trainer...");
                             chosenPokemon = "Pikachu";
                             wait(2);
                         } 
@@ -166,7 +176,7 @@ public class SetupGame
 
                 if (chosenPokemon == null) 
                 {
-                    System.out.println("Professor Oak: It's time to choose your Pokemon trainer... Enter a digit between 1-4!");
+                    printMessage("Professor Oak: It's time to choose your Pokemon trainer... Enter a digit between 1-4!");
                     continue;
                 }
 
@@ -182,13 +192,13 @@ public class SetupGame
 
                 pokemonChosen = true;
 
-                System.out.println("\nProfessor Oak: Now, what will be your challenge message?");
-                String challengeMessage = scanner.nextLine().trim();
+                printMessage("\nProfessor Oak: Now, what will be your challenge message?");
+                String challengeMessage = getUserInput();
                 this.trainer.setChallengeMessage(challengeMessage);
 
             } catch (NumberFormatException e) 
             {
-                System.out.println("Professor Oak: That doesn't look like a number. Try again.");
+                printMessage("Professor Oak: That doesn't look like a number. Try again.");
             }
         }
     }
@@ -203,6 +213,15 @@ public class SetupGame
         return trainer;
     }
 
+    private void printMessage(String message) 
+    {
+        // If GUI is connected, display message to GUI
+        if (gui != null) 
+        {
+            gui.appendMessage(message);
+        }
+    }
+    
     public void wait(int seconds) 
     {
         try 
@@ -211,6 +230,55 @@ public class SetupGame
         } catch (InterruptedException e) 
         {
             Thread.currentThread().interrupt();
+        }
+    }
+    
+    // Getter and setter methods for GUI
+    public void setGUI(SetupGUI gui) 
+    {
+        this.gui = gui;
+        
+        // Set input listener 
+        gui.setInputListener(input ->
+        {
+            synchronized (SetupGame.this)
+            {
+                lastUserInput = input;
+                
+                // Notify getUserInput method to set the lastUserInput
+                SetupGame.this.notify();
+            }
+        }); 
+    }
+    
+    private String getUserInput()
+    {
+        synchronized(this)
+        {
+            // Reset previous input 
+            lastUserInput = null;
+            
+            try
+            {
+                // Wait until input listener sets the lastUserInput
+                while (lastUserInput == null)
+                {
+                    wait();
+                }
+            } catch (InterruptedException e)
+            {
+                Thread.currentThread().interrupt();
+            }
+            return lastUserInput;
+        }
+    }
+    
+    // Update pokeball image in the GUI at a given index 
+    private void revealPokemonPokeball(int index, String imagePath)
+    {
+        if (gui != null)
+        {
+            gui.setPokeballImage(index, imagePath);
         }
     }
 }

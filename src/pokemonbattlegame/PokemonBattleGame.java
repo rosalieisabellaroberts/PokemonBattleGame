@@ -6,6 +6,8 @@ package pokemonbattlegame;
 
 import java.util.ArrayList;
 import java.sql.*;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 /**
  *
@@ -26,7 +28,7 @@ public class PokemonBattleGame
         PokemonBattleGame game = new PokemonBattleGame();
         
         // Define connection 
-        Connection connection = null;
+         final Connection connection;
         
         try 
         {     
@@ -47,16 +49,17 @@ public class PokemonBattleGame
             
             // Store types and effectiveness 
             TypeStorage.setTypes(types);
-            
-            // Show the professor Oaks intro JFrame 
-            GameSetup oaksIntro = new GameSetup();
-            oaksIntro.setVisible(true);
         
-            // Load trainer 
+            // Show Setup GUI 
+            // Create a new game setup GUI instance
+            SetupGUI gui = new SetupGUI();
+            // Create a new game setup instance 
             SetupGame setup = new SetupGame();
+            // Connect GUI to the game setup 
+            setup.setGUI(gui);
+
+            // Run trainer setup
             Trainer trainer = setup.run(connection);
-            game.setTrainer(trainer);
-            game.setPokemons(setup.getPokemons());
 
             // If trainer creation fails, stop program
             if (trainer == null) 
@@ -64,34 +67,95 @@ public class PokemonBattleGame
                 System.out.println("Professor Oak: Looks like you are not fit to be a trainer just yet ...");
                 return;
             }
-
-             // Load the effectiveness of all the types 
-            game.setTypes(DatabaseManager.loadTypesWithEffectiveness(connection));
             
             // Save the trainer data into the database 
             SaveManager.saveTrainer(trainer, connection);
-
-            // Prompt user for start 
-            BattleManager battleManager = new BattleManager(game);
-
-            // Randomly generate an opponent
-            // GenerateOpponent generatedOpponent = new GenerateOpponent();
-            // generatedOpponent.generateOpponent(game.getTrainer(), connection);
-            // game.setOpponent(generatedOpponent.getOpponent());
             
-            // Randomly generate pokemon teams
-            //GeneratePokemonTeams generatedPokemonTeams = new GeneratePokemonTeams();
-            //generatedPokemonTeams.setPokemons(setup.getPokemons());
-            //generatedPokemonTeams.generatePokemonTeams(game.getTrainer(), game.getOpponent(), connection);
-
-            battleManager.startBattle(connection);  
-       
-        } catch (Exception e)
+            // Set trainer, pokemon, types and effectiveness data in game
+            game.setTrainer(trainer);
+            game.setPokemons(setup.getPokemons());
+            game.setTypes(DatabaseManager.loadTypesWithEffectiveness(connection));
+            
+            // Get starter pokemon 
+            Pokemon starterPokemon = game.getTrainer().getStarterPokemon();
+            
+            // Show battleStartGUI on event dispatch thread
+            SwingUtilities.invokeLater(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    // Create BattleStartGUI panel 
+                    BattleStartGUI battleStartGUI = new BattleStartGUI(starterPokemon);
+                    
+                    // Add BattleStartGUI to the SetupGUI card layout 
+                    gui.addCard(battleStartGUI, "BattleStart");
+                    
+                    // Create thread to pause before switching cards (screens)
+                    Thread pauseThread = new Thread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                // Pause for 2 seconds
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e)
+                            {
+                                e.printStackTrace();
+                            }
+                            
+                            // Switch cards back on the event dispatch thread
+                            SwingUtilities.invokeLater(new Runnable()
+                            {
+                                @Override
+                                public void run()
+                                {
+                                    gui.showScreen("BattleStart");
+                                } 
+                            });                         
+                        }
+                    });
+                    // Start the pauseThread
+                    pauseThread.start();
+                }
+            });
+            
+            // Run battle logic on background thread
+            Thread battleThread = new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        BattleManager battleManager = new BattleManager(game);
+                        
+                        // Attach GUI to the BattleManager
+                        battleManager.setGUI(gui);
+                        
+                        battleManager.startBattle(connection);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    } catch (SQLException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            
+            battleThread.start();
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
-        } 
+        }
     }
 
+    // Getter and setter methods 
     public void setTrainer(Trainer trainer) 
     {
         this.trainer = trainer;
