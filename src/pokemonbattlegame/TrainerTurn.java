@@ -11,293 +11,233 @@ package pokemonbattlegame;
  */
 
 import java.util.*;
-import java.awt.event.ActionListener;
-import javax.swing.SwingUtilities;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 // Implements the BattleAction interface which declares the takeTurn() method and returns a BattleResult object
 public class TrainerTurn extends Turn implements BattleAction 
 {
-    private BattleGUI battleGUI;
-    private Battle battle;
-
-    // Player action is set as int, where 1 = FIGHT, 2 = SWITCH and 3 = RUN
-    private PlayerActionType playerActionType = null;
-    private int selectedMove = 0;
-    private int selectedPokemon = -1;
-    private boolean actionSelected = false;
-
-    public TrainerTurn(Trainer trainer, Trainer opponent, Pokemon trainerCurrentPokemon, Pokemon opponentCurrentPokemon, Random random, BattleGUI battleGUI, Battle battle) 
+    public TrainerTurn(Trainer trainer, Trainer opponent, 
+                       Pokemon trainerCurrentPokemon, Pokemon opponentCurrentPokemon,
+                       Scanner scanner, Random random) 
     {
-        super(trainer, opponent, trainerCurrentPokemon, opponentCurrentPokemon, random, battleGUI);
-        this.battle = battle;
+        super(trainer, opponent, trainerCurrentPokemon, opponentCurrentPokemon, random);
+        this.scanner = scanner;
     }
 
     @Override
-    public synchronized BattleResult takeTurn() throws InterruptedException 
-    {
-        boolean gameFinished = false;
-        boolean trainerWon = false;
-        boolean ranAway = false;
+    public BattleResult takeTurn() throws InterruptedException {
+    boolean gameFinished = false;
+    boolean trainerWon = false;
+    boolean ranAway = false;
 
-        // Show main action options in battleGUI by hiding sub-options for FIGHT and SWITCH
-        SwingUtilities.invokeLater(new Runnable() 
-        {
-            @Override
-            public void run() 
-            {
-                battleGUI.hideOptions();
-                battleGUI.enableMainButtons();
+    int orderNumber;
+    int moveSelection;
+    double randomAccuracy;
+
+    System.out.println("\n(1) FIGHT (2) SWITCH POKEMON (3) RUN");
+    System.out.println("What will you do?");
+    int selection = getValidInput(scanner, 1, 3, "Enter a digit between 1-3...");
+
+    switch (selection) {
+        case 1:
+            orderNumber = 1;
+            ArrayList<Move> moves = trainerCurrentPokemon.getMoves();
+
+            System.out.print("MOVES: ");
+            for (Move move : moves) {
+                System.out.print("(" + orderNumber + ") " + move.getName() + " ");
+                orderNumber++;
             }
-        });
 
+            System.out.println("\nWhich will you use?");
+            moveSelection = getValidInput(scanner, 1, moves.size(), "Enter a digit between 1-"+ moves.size()+"...");
 
-        // Wait for trainer selection of action 
-        while (!actionSelected)
-        {
-            wait();
-        }
-          
-        // Determine action type from current playerAction
-        switch (playerActionType)
-        {
-            // FIGHT
-            case FIGHT:
-                // Assign chosen move into a move object
-                Move move = trainerCurrentPokemon.getMoves().get(selectedMove - 1);
-                // Display message about chosen move in battle log
-                SwingUtilities.invokeLater(new Runnable() 
-                {
-                    @Override
-                    public void run() 
-                    {
-                        battleGUI.appendMessage("\n" + trainerCurrentPokemon.getName() + " used " + move.getName() + "!");
-                    }
-                });
-
+            Move selectedMove = moves.get(moveSelection - 1);
+            System.out.println("\n" + trainerCurrentPokemon.getName() + " used " + selectedMove.getName() + "!");
+            Thread.sleep(2000);
+            
+            if (moveHit(selectedMove, random)) 
+            {
+                int damage = calculateDamage(selectedMove, trainerCurrentPokemon, opponentCurrentPokemon);
+                
+                opponentCurrentPokemon.setHP(Math.max(0, opponentCurrentPokemon.getHP() - damage));
                 Thread.sleep(2000);
-
-                if (moveHit(move, random)) 
-                {
-                    // Calculate damage 
-                    int damage = calculateDamage(move, trainerCurrentPokemon, opponentCurrentPokemon);
-                    // Apply damage to opponent pokemon
-                    opponentCurrentPokemon.setHP(Math.max(0, opponentCurrentPokemon.getHP() - damage));
+                System.out.println("It dealt " + damage + " damage.");
+                Thread.sleep(2000);
+                
+                if (opponentCurrentPokemon.getHP() <= 0) {
+                    System.out.println(opponentCurrentPokemon.getName() + " fainted!");
                     Thread.sleep(2000);
-                    // Display message about damge to opponent pokemon in battle log
-                    SwingUtilities.invokeLater(new Runnable() 
+                    boolean oppSwitched = false;
+
+                    for (Pokemon p : opponent.getTeam()) 
                     {
-                        @Override
-                        public void run() 
+                        if (p.getHP() > 0) 
                         {
-                            battleGUI.appendMessage("It dealt " + damage + " damage.");
-                        }
-                    });
-                    Thread.sleep(2000);
-
-                    // If the opponent pokemons' HP became less than or equal to 0
-                    if (opponentCurrentPokemon.getHP() <= 0) 
-                    {
-                        // Display message about opponent pokemon fainting in battle log
-                        SwingUtilities.invokeLater(new Runnable() 
-                        {
-                            @Override
-                            public void run() 
-                            {
-                                battleGUI.appendMessage(opponentCurrentPokemon.getName() + " fainted!");
-                            }
-                        });
-                        Thread.sleep(2000);
-                        boolean opponentSwitchedPokemon = false;
-
-                        // For every pokemon in opponent team
-                        for (Pokemon pokemon : opponent.getTeam()) 
-                        {
-                            // If pokemons' HP is greater than 0
-                            if (pokemon.getHP() > 0) 
-                            {
-                                // Set opponents' current pokemon to the pokemon with HP greater than 0
-                                opponentCurrentPokemon = pokemon;
-                                opponent.setStarterPokemon(pokemon);
-                                // Display message about new pokemon sent out by opponent to battle log
-                                 SwingUtilities.invokeLater(new Runnable() 
-                                 {
-                                    @Override
-                                    public void run() 
-                                    {
-                                        battleGUI.appendMessage(opponent.getName() + " sent out " + opponentCurrentPokemon.getName() + "!");
-                                    }
-                                });
-                                Thread.sleep(2000);
-                                // Set opponentSwitchedPokemon flag to true
-                                opponentSwitchedPokemon = true;
-                                break;
-                            }
-                        }
-
-                        // If opponent could not switch pokemon (because they have no remaining pokemon with HP greater than 0)
-                        if (!opponentSwitchedPokemon) 
-                        {
-                            // Finish game and set trainer as having won
-                            trainerWon = true;
-                            gameFinished = true;
+                            opponentCurrentPokemon = p;
+                            opponent.setStarterPokemon(p);
+                            System.out.println(opponent.getName() + " sent out " + p.getName() + "!");
+                            Thread.sleep(2000);
+                            oppSwitched = true;
                             break;
                         }
                     }
-                } else 
-                {
-                    SwingUtilities.invokeLater(new Runnable() 
-                    {
-                        @Override
-                        public void run() 
-                        {
-                            battleGUI.appendMessage(trainerCurrentPokemon.getName() + " missed!");
-                        }
-                    });
-                    Thread.sleep(2000);
-                }
-                break;
 
-            // SWITCH
-            case SWITCH:
- 
-            // If index of pokemon chosen in team is out of range, exit the loop
-            if (selectedPokemon < 0 || selectedPokemon >= trainer.getTeam().size())
-            {
-                actionSelected = false;
-                playerActionType = null;
-                break;
-            }
-
-            // Set chosen pokemon from the teamIndex passed into the function
-            Pokemon chosenPokemon = trainer.getTeam().get(selectedPokemon);
-
-            // If chosen pokemon has an HP less than or equal to 0
-            if (chosenPokemon.getHP() <= 0)
-            {
-                // Display message about fainted pokemon
-                SwingUtilities.invokeLater(new Runnable() 
-                {
-                    @Override
-                    public void run() 
-                    {
-                        battleGUI.appendMessage(chosenPokemon.getName() + " has fainted. Choose another.");
+                    if (!oppSwitched) {
+                        trainerWon = true;
+                        gameFinished = true;
+                        break;
                     }
-                });
-                actionSelected = false;
-                playerActionType = null;
-                break;
-            }
-
-            // If chosen pokemon is already chosen 
-            if (chosenPokemon == trainerCurrentPokemon)
-            {
-                // Display message about active pokemon 
-                SwingUtilities.invokeLater(new Runnable() 
-                {
-                    @Override
-                    public void run() 
-                    {
-                        battleGUI.appendMessage(chosenPokemon.getName() + " is already active.");
-                    }
-                });
-                actionSelected = false;
-                playerActionType = null;
-                break;
-            }
-
-            // Display message about chosen pokemon
-            SwingUtilities.invokeLater(new Runnable() 
-            {
-                @Override
-                public void run() 
-                {
-                    battleGUI.appendMessage("Go, " + chosenPokemon.getName() + "!");
-                    actionSelected = false;
-                    playerActionType = null;
                 }
-            });
-            Thread.sleep(2000);
+            } else {
+                System.out.println(trainerCurrentPokemon.getName() + " missed!");
+                Thread.sleep(2000);
+            }
+
+            // Trainer's Pokémon faint check after opponent's attack
+            if (trainerCurrentPokemon.getHP() <= 0) {
+                handleTrainerSwitch();
+            }
+
+            DisplayGameDetails gameDetails = new DisplayGameDetails();
+            gameDetails.displayGameDetails(trainer, opponent);
             break;
 
-            // RUN
-            case RUN:
-                // Display message about user running away to battle log
-                SwingUtilities.invokeLater(new Runnable() 
-                {
-                    @Override
-                    public void run() 
-                    {
-                        battleGUI.appendMessage("You ran away! The battle ends.");
-                        // Reset action state for next turn 
-                        actionSelected = false;
-                        playerActionType = null;
-                    }
-                });
-                Thread.sleep(2000);
-                ranAway = true;
-                gameFinished = true;
-                break;
+        case 2:
+            switchPokemon();
+            break;
+
+        case 3:
+            Thread.sleep(2000);
+            System.out.println("You ran away! The battle ends.");
+            ranAway = true;
+            gameFinished = true;
+            break;
+        }
+        return new BattleResult(trainerCurrentPokemon, opponentCurrentPokemon, gameFinished, trainerWon, ranAway);
+    }
+    
+    private void handleTrainerSwitch() 
+    {
+        System.out.println(trainerCurrentPokemon.getName() + " fainted!");
+        boolean switched = false;
+
+        while (!switched) 
+        {
+            System.out.println("\nChoose a new pokemon to continue:");
+            int idx = 1;
+
+            for (Pokemon p : trainer.getTeam()) 
+            {
+                String tag = (p.getHP() <= 0) ? " [FNT]" : "";
+                System.out.println("(" + idx + ") " + p.getName() + tag);
+                idx++;
             }
 
-            // Reset action state for next turn 
-            actionSelected = false;
-            playerActionType = null;
-            selectedMove = 0;
-            selectedPokemon = -1;
+            System.out.println("(0) Forfeit battle");
+            int choice = getValidInput(scanner, 0, trainer.getTeam().size(), "Choose a pokemon or enter 0 to forfeit the battle...");
 
-            // Return battleResult object 
-            return new BattleResult(trainerCurrentPokemon, opponentCurrentPokemon, gameFinished, trainerWon, ranAway);
+            if (choice == 0) 
+            {
+                System.out.println("You forfeited the battle.");
+                System.exit(0); // Ends the battle
+            }
+
+            if (choice < 1 || choice > trainer.getTeam().size()) 
+            {
+                System.out.println("Invalid choice.");
+                continue;
+            }
+
+            Pokemon chosen = trainer.getTeam().get(choice - 1);
+
+            if (chosen.getHP() <= 0) 
+            {
+                System.out.println(chosen.getName() + " has fainted. Pick another Pokémon.");
+                continue;
+            }
+
+            trainerCurrentPokemon = chosen;
+            trainer.setStarterPokemon(chosen);
+            System.out.println("Go, " + chosen.getName() + "!");
+            switched = true;
         }
-        
-    // Call method when FIGHT button is selected 
-    public synchronized void selectFight(int moveIndex)
-    {
-        // Set the index of the chosen move and raise actionSelected flag
-        this.playerActionType = PlayerActionType.FIGHT;
-        this.selectedMove = moveIndex;
-        this.actionSelected = true;
-        
-        // Unlock the battle loop waiting for trainer's choice
-        notify();
     }
+    
+    private void switchPokemon() throws InterruptedException 
+    {
+        int orderNumber = 1;
+        System.out.print("YOUR TEAM: ");
 
-    // Call method when SWITCH button is selected
-    public synchronized void selectSwitch(int pokemonIndex)
+        for (Pokemon p : trainer.getTeam()) 
+        {
+            String tag = (p.getHP() > 0) ? "" : " [FNT]";
+            System.out.print("(" + orderNumber + ") " + p.getName() + tag + " ");
+            orderNumber++;
+        }
+
+        int switchChoice = getValidInput(scanner, 0, trainer.getTeam().size(), "Choose a pokemon (1-" + trainer.getTeam().size() + "} or enter 0 to cancel...");
+
+        if (switchChoice == 0) return;
+
+        if (switchChoice < 1 || switchChoice > trainer.getTeam().size()) 
+        {
+            System.out.println("Invalid index.");
+            return;
+        }
+
+        Pokemon chosen = trainer.getTeam().get(switchChoice - 1);
+
+        if (chosen.getHP() <= 0) 
+        {
+            System.out.println(chosen.getName() + " has fainted. Choose another.");
+            return;
+        }
+        if (chosen == trainerCurrentPokemon) 
+        {
+            System.out.println(chosen.getName() + " is already active.");
+            return;
+        }
+
+        trainerCurrentPokemon = chosen;
+        trainer.setStarterPokemon(chosen);
+        System.out.println("Go, " + chosen.getName() + "!");
+
+        DisplayGameDetails gameDetails = new DisplayGameDetails();
+        gameDetails.displayGameDetails(trainer, opponent);
+    }
+    
+    // Helper method to check for valid input 
+    private int getValidInput(Scanner scanner, int min, int max, String prompt)
     {
-        this.playerActionType = PlayerActionType.SWITCH;
-        this.selectedPokemon = pokemonIndex;
-        this.actionSelected = true;
+        int input = -1;
         
-        // Unlock the battle loop
-        notify(); 
-    }
-        
-    // Call method when RUN button is selected 
-    public synchronized void selectRun()
-    {
-       this.playerActionType = PlayerActionType.RUN;
-       this.actionSelected = true;
-       
-       // Unlock the battle loop
-        notify();       
-    }
-    
-    // Getter and setter methods
-    public void setBattleGUI(BattleGUI battleGUI) 
-    {
-        this.battleGUI = battleGUI;
-    }
-    
-    public void setBattle(Battle battle) 
-    {
-        this.battle = battle;
-    }
-    
-    public void setTrainerCurrentPokemon(Pokemon pokemon) 
-    {
-        this.trainerCurrentPokemon = pokemon;
+        while (true)
+        {
+            System.out.println(prompt);
+            // Read in full line
+            String line = scanner.nextLine();
+            
+            try
+            {
+                // Try to parse input 
+                input = Integer.parseInt(line.trim());
+                
+                // If input is within range 
+                if (input >= min && input <= max)
+                {
+                    // Return input
+                    return input;
+                }
+                else
+                {
+                    // Return error message
+                    System.out.println("Please enter a digit between "+ min +" and " + max + "...");
+                }
+            } catch (NumberFormatException e)
+            {
+                System.out.println("Invalid input trainer! Please enter a digit...");
+            }
+        }
     }
 }
 

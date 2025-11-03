@@ -12,8 +12,6 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.List;
-import java.sql.*;
 
 /**
  *
@@ -31,7 +29,6 @@ public class SetupGUI extends JFrame
     // Card layout for multiple screens
     private JPanel cards;
     private CardLayout cardLayout;
-    private BattleGUI battleGUI;
     
     // Create blocking queue for input to enable waiting for user inout 
     private final BlockingQueue<String> inputQueue = new LinkedBlockingQueue<>();
@@ -170,12 +167,6 @@ public class SetupGUI extends JFrame
         battleLog.setCaretPosition(battleLog.getDocument().getLength());
     }
     
-    // Get access to BattleGUI
-    public BattleGUI getBattleGUI()
-    {
-        return battleGUI;
-    }
-    
     // Set input listener for game logic
     public void setInputListener(InputListener listener)
     {
@@ -241,28 +232,5 @@ public class SetupGUI extends JFrame
         }
     }
     
-    // Create method to create and show the BattleGUI
-    public void createAndShowBattleGUI(Trainer trainer, Trainer opponent, Battle battle, Connection connection, TrainerTurn trainerTurn)
-    {
-        // Create a single BattleGUI instance for the current battle
-        battleGUI = new BattleGUI(trainer.getStarterPokemon(), opponent.getStarterPokemon(), opponent.getImagePath(), this, battle);
-
-        // Add the BattleGUI instance as a card in the card layout
-        addCard(battleGUI, "BattleGUI");
-
-        // Show the BattleGUI card
-        showScreen("BattleGUI");
-    }  
-    
-    // Getter and setter methods
-    public JPanel getCards()
-    {
-        return cards;
-    }
-
-    public CardLayout getCardLayout()
-    {
-        return cardLayout;
-    }
 }
 

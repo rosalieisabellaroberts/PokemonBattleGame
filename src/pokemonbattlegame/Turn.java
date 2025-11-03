@@ -20,16 +20,14 @@ public abstract class Turn implements BattleAction
     protected Pokemon opponentCurrentPokemon;
     protected Scanner scanner;
     protected Random random;
-    protected BattleGUI battleGUI;
     
-    public Turn(Trainer trainer, Trainer opponent, Pokemon trainerCurrentPokemon, Pokemon opponentCurrentPokemon, Random random, BattleGUI battleGUI)
+    public Turn(Trainer trainer, Trainer opponent, Pokemon trainerCurrentPokemon, Pokemon opponentCurrentPokemon, Random random)
     {
         this.trainer = trainer;
         this.opponent = opponent;
         this.trainerCurrentPokemon = trainerCurrentPokemon;
         this.opponentCurrentPokemon = opponentCurrentPokemon;
         this.random = random;
-        this.battleGUI = battleGUI;
     }
     
     // Check if move hit 
@@ -52,23 +50,13 @@ public abstract class Turn implements BattleAction
         {
             typeMultiplier = 2.0; 
             Thread.sleep(2000);  
-            
-            // If the BattleGUI is available 
-            if (battleGUI != null)
-            {
-                battleGUI.appendMessage("It's super effective!");
-            } 
+            System.out.println("It's super effective!");
         // If attack type is weak against defensive type, decrease type multiplier 
         } else if (atkType.isNotVeryEffectiveAgainst(atkType, defType))
         {
             typeMultiplier = 0.5;
             Thread.sleep(2000);
-            
-            // If the BattleGUI is available 
-            if (battleGUI != null)
-            {
-                battleGUI.appendMessage("It's not very effective...");
-            }
+            System.out.println("It's not very effective...");
         }
         
         // Calculate critical hit multiplier 
@@ -78,11 +66,7 @@ public abstract class Turn implements BattleAction
         if (criticalHit)
         {
             Thread.sleep(2000);
-            // If the BattleGUI is available 
-            if (battleGUI != null)
-            {
-                battleGUI.appendMessage("A critical hit!");
-            }
+            System.out.println("A critical hit!");
         }
         
         // Calculate random multiplier 
@@ -96,12 +80,6 @@ public abstract class Turn implements BattleAction
         }  
             
         return Math.max(1, damage);     
-    }
-    
-    // Getter and setter methods
-    public void setBattleGUI(BattleGUI battleGUI) 
-    {
-        this.battleGUI = battleGUI;
     }
 }
 

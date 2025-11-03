@@ -14,12 +14,11 @@ import java.util.*;
 // Implements the BattleAction interface which declares the takeTurn() method and returns a BattleResult object
 public class OpponentTurn extends Turn implements BattleAction 
 {
-    private BattleGUI battleGUI;
 
     public OpponentTurn(Trainer trainer, Trainer opponent,
                         Pokemon trainerCurrentPokemon, Pokemon opponentCurrentPokemon,
-                        java.util.Random random, BattleGUI battleGUI) {
-        super(trainer, opponent, trainerCurrentPokemon, opponentCurrentPokemon, random, battleGUI);
+                        java.util.Random random) {
+        super(trainer, opponent, trainerCurrentPokemon, opponentCurrentPokemon, random);
     }
 
     @Override
@@ -28,40 +27,36 @@ public class OpponentTurn extends Turn implements BattleAction
         boolean gameFinished = false;
         boolean trainerWon = false;
 
-        // Refresh the currentPokemon reference 
-        this.opponentCurrentPokemon = opponent.getStarterPokemon();
-        
         // Functionality for trainer's turn (copy, paste and adjust slight details from users loop above
         ArrayList<Move> oppMoves = opponentCurrentPokemon.getMoves();
         
         if(oppMoves == null || oppMoves.isEmpty())
         {
             Thread.sleep(2000);  
-            battleGUI.appendMessage(opponentCurrentPokemon.getName() + " has no usable moves!");
+            System.out.println(opponentCurrentPokemon.getName() + " has no usable moves!");
             return new BattleResult(trainerCurrentPokemon, opponentCurrentPokemon, false, false, false);
         }
                 
         Move oppMove = oppMoves.get(random.nextInt(oppMoves.size()));
                 
         Thread.sleep(2000);  
-        battleGUI.appendMessage("\n"+opponentCurrentPokemon.getName() + " used " + oppMove.getName() + "!");
+        System.out.println("\n"+opponentCurrentPokemon.getName() + " used " + oppMove.getName() + "!");
         Thread.sleep(2000);  
         
         if (moveHit(oppMove, random))
-        {                 
-            
+        {                    
             int damage = calculateDamage(oppMove, trainerCurrentPokemon, opponentCurrentPokemon);
                 
-            trainerCurrentPokemon.setHP(Math.max(0, opponentCurrentPokemon.getHP() - damage));
+            opponentCurrentPokemon.setHP(Math.max(0, opponentCurrentPokemon.getHP() - damage));
             Thread.sleep(2000);
-            battleGUI.appendMessage("It dealt " + damage + " damage.");
+            System.out.println("It dealt " + damage + " damage.");
             Thread.sleep(2000);
                     
             // If pokemon fainteds
             if (trainerCurrentPokemon.getHP() <= 0)
             {
                 Thread.sleep(2000);  
-                battleGUI.appendMessage(trainerCurrentPokemon.getName() + " fainted!");
+                System.out.println(trainerCurrentPokemon.getName() + " fainted!");
                 Thread.sleep(2000);
                 boolean playerSwitched = false;
                 for (Pokemon p:trainer.getTeam())
@@ -77,7 +72,7 @@ public class OpponentTurn extends Turn implements BattleAction
                         {
                         }
                         
-                        battleGUI.appendMessage("You sent out " + p.getName() + "!");
+                        System.out.println("You sent out " + p.getName() + "!");
                         Thread.sleep(2000);
                         playerSwitched = true;
                         break;
@@ -95,7 +90,7 @@ public class OpponentTurn extends Turn implements BattleAction
         else
         {
             Thread.sleep(2000);  
-            battleGUI.appendMessage(opponentCurrentPokemon.getName() + " missed!");
+            System.out.println(opponentCurrentPokemon.getName() + " missed!");
             Thread.sleep(2000);
         }
     
@@ -104,17 +99,5 @@ public class OpponentTurn extends Turn implements BattleAction
         
         return new BattleResult(trainerCurrentPokemon, opponentCurrentPokemon, gameFinished, trainerWon, false);
     }
-    
-    // Getter and setter methods
-    public void setBattleGUI(BattleGUI battleGUI) 
-    {
-        this.battleGUI = battleGUI;
-    }
-    
-    public void setOpponentCurrentPokemon(Pokemon pokemon) 
-    {
-        this.opponentCurrentPokemon = pokemon;
-    }
-    
 }
 

@@ -21,11 +21,15 @@ public class SetupGame
     public Trainer run(Connection connection) 
     {
         printMessage("Professor Oak: Hello there! Welcome to the world of Pokemon!");
-        printMessage("My name is Oak! People call me the Pokemon Professor!");
+        wait(2);
+        printMessage("My name is Oak! People call me the Pokemon Prof!");
         wait(2);
         printMessage("This world is inhabited by creatures called Pokemon!"); 
+        wait(2);
         printMessage("For some people, Pokemon are pets. Others use them for fights."); 
-        printMessage("Myself...I study Pokemon as a profession.");    
+        wait(2);
+        printMessage("Myself...I study Pokemon as a profession."); 
+        wait(2);      
         printMessage("\nProfessor Oak: What is your username, Trainer? ");
 
         String username = getUserInput();
@@ -79,7 +83,7 @@ public class SetupGame
         printMessage("Professor Oak: You must be new around here! What is your name?");
         String name = getUserInput();
 
-        this.trainer = new Trainer(username, name, 0, 1, null, "", "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\trainer.png");
+        this.trainer = new Trainer(username, name, 0, 1, null, "");
         this.trainer.setTeam(new ArrayList<>());
         
         printMessage("Professor Oak: Ah, splendid! A fine name indeed.");
