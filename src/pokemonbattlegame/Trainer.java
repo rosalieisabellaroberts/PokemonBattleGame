@@ -15,8 +15,9 @@ public class Trainer extends Character
     private String username;
     private int score;
     private String challengeMessage;
+    private String imagePath;
     
-    public Trainer (String username, String name, int score, int level, Pokemon starterPokemon, String challengeMessage)
+    public Trainer (String username, String name, int score, int level, Pokemon starterPokemon, String challengeMessage, String imagePath)
     {
         super(name, level);
         this.username = username;
@@ -25,6 +26,7 @@ public class Trainer extends Character
         this.team = new ArrayList<>();
         this.team.add(starterPokemon);
         this.challengeMessage = challengeMessage;
+        this.imagePath = imagePath;
     }
     
     public Trainer(String username, String name, String challengeMessage)
@@ -34,13 +36,15 @@ public class Trainer extends Character
         this.score = 0;
         this.challengeMessage = challengeMessage;
         this.setTeam(new ArrayList<>());
+        this.imagePath = "C:\\Users\\dilro\\OneDrive\\Documents\\NetBeansProjects\\PokemonBattleGame\\src\\trainer.png";
+                
     }
     
     // Implement dialogue of battle challenge message 
     @Override 
-    public void speak()
+    public String speak()
     {
-        System.out.println(getName() + ": " + challengeMessage);
+        return getName() + ": " + challengeMessage;
     }
     
     // Getter and setter methods
@@ -69,6 +73,16 @@ public class Trainer extends Character
         this.challengeMessage = challengeMessage;
     }
 
+     public String getImagePath()
+    {
+        return imagePath;
+    }
+     
+    public void setImagePath(String imagePath)
+    {
+        this.imagePath = imagePath;
+    }
+    
     public String getUsername() 
     {
         return username;

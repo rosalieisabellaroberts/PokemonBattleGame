@@ -6,8 +6,9 @@ package pokemonbattlegame;
 
 import java.awt.*;
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.sql.*;
+import java.util.List;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  *
@@ -16,19 +17,23 @@ import java.awt.event.ActionListener;
 public class BattleStartGUI extends JPanel
 {
     private JTextArea battleLog;
-    private JTextField inputField;
-    private InputListener listener;
     private JPanel middlePanel;
-    // Allow space for 4 pokeballs (in event pikachu is selected)
     private JLabel trainerLabel;    
     private JLabel starterPokemonLabel; 
-    private Pokemon starterPokemon;
-    
+    private SetupGUI gui;
+    private BattleManager battleManager;
+    private Pokemon starterPokemon; 
+    private Trainer trainer;
+    private Connection connection;
     
     // Constructor to set starterPokemon for trainer 
-    public BattleStartGUI(Pokemon starterPokemon)
+    public BattleStartGUI(Trainer trainer, Connection connection, SetupGUI gui, BattleManager battleManager)
     {
-        this.starterPokemon = starterPokemon;
+        this.trainer = trainer;
+        this.connection = connection;
+        this.starterPokemon = trainer.getStarterPokemon();
+        this.gui = gui;
+        this.battleManager = battleManager;
         
         setLayout(new BorderLayout());
         
@@ -65,38 +70,63 @@ public class BattleStartGUI extends JPanel
         middlePanel.add(starterPokemonLabel);
         add(middlePanel, BorderLayout.CENTER);
         
-        // BOTTOM INPUT FIELD (user input)
-        inputField = new JTextField();
-        inputField.setFont(new Font("Consolas", Font.PLAIN, 14));
-        add(inputField, BorderLayout.SOUTH);
-               
-        // Add action listener for enter key 
-        inputField.addActionListener(new ActionListener()
+        // Make the panel focusable so it can receive key events and detect any key pressed by user
+        setFocusable(true);
+        
+        // Request focus when panel is first displayed to receive key events
+        addHierarchyListener(new java.awt.event.HierarchyListener() 
         {
             @Override
-            public void actionPerformed(ActionEvent e)
+            // Check if the showing state of the component has changed
+            public void hierarchyChanged(java.awt.event.HierarchyEvent e) 
             {
-                // Get and trim user input from inputField
-                String userInput = inputField.getText().trim();
-                
-                // If there is user input 
-                if (!userInput.isEmpty())
+                // If SHOWING_CHANGED flag is raised, component has changed (been shown or hidden)
+                if ((e.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) != 0)
                 {
-                    // Append user message to output area 
-                    appendMessage("You: " + userInput);
-                    // Reset text field
-                    inputField.setText("");
-                    
-                    // If event listener is not null
-                    if (listener != null)
+                    // If panel is visible on screen
+                    if (isShowing())
                     {
-                        // Pass user input to game logic 
-                        listener.onInputSubmitted(userInput);
+                        // Request focus so the panel can receive keyboard events
+                        requestFocusInWindow();
                     }
                 }
-            }         
+            }
+        });
+        
+        // Add a key press to detect any key press from the user 
+        addKeyListener(new java.awt.event.KeyAdapter() 
+        {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e)
+            {
+                // Start battle logic if key is pressed
+                startBattleLogic();
+                
+                // Remove key listener so it only triggers once
+                removeKeyListener(this);
+            }
         });
     }
+    
+    // Method for starting battle logic
+    private void startBattleLogic() 
+    {
+        // Run battle in background thread
+        new Thread(new Runnable() 
+        {
+            @Override
+            public void run() 
+            {
+                try 
+                {
+                    battleManager.startBattle(connection);
+                } catch (Exception e) 
+                {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }          
     
     // Method for adding messages to the window 
     public void appendMessage(String message)
@@ -107,16 +137,11 @@ public class BattleStartGUI extends JPanel
         battleLog.setCaretPosition(battleLog.getDocument().getLength());
     }
     
-    // Set input listener for game logic
-    public void setInputListener(InputListener listener)
+    // Setter method
+    public void setBattleManager(BattleManager battleManager) 
     {
-        this.listener = listener;
-    }
-    
-    // Input callbacks 
-    public interface InputListener
-    {
-        void onInputSubmitted(String input);
+        this.battleManager = battleManager;
     }
 }
+    
 

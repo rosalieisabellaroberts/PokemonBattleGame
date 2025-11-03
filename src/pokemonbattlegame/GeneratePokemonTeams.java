@@ -19,6 +19,12 @@ public class GeneratePokemonTeams
     private static Pokemon trainerCurrentPokemon; 
     private static Pokemon opponentCurrentPokemon;
     
+    public GeneratePokemonTeams(List<Pokemon> pokemons)
+    {
+        // Convert list to an arrary for simplified random access
+        this.pokemons = pokemons.toArray(new Pokemon[0]);
+    }
+    
     public static void generatePokemonTeams(Trainer trainer, Trainer opponent, Connection connection) throws SQLException
     {
         // Clear old teams 

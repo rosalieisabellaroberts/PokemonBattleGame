@@ -24,7 +24,7 @@ public abstract class Character
     }
     
     // Implement dialgoue for character subclasses 
-    public abstract void speak();
+    public abstract String speak();
     
     // Getter and setter methods
     public String getName()

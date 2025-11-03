@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.sql.*;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  *
@@ -76,6 +77,9 @@ public class PokemonBattleGame
             game.setPokemons(setup.getPokemons());
             game.setTypes(DatabaseManager.loadTypesWithEffectiveness(connection));
             
+            // Create BattleStartGUI (passing temporary null for BattleManager)
+            BattleStartGUI battleStartGUI = new BattleStartGUI(trainer, connection, gui, null);
+            
             // Get starter pokemon 
             Pokemon starterPokemon = game.getTrainer().getStarterPokemon();
             
@@ -85,9 +89,18 @@ public class PokemonBattleGame
                 @Override
                 public void run()
                 {
-                    // Create BattleStartGUI panel 
-                    BattleStartGUI battleStartGUI = new BattleStartGUI(starterPokemon);
+                    // Create BattleManager
+                    BattleManager battleManager = new BattleManager(game, battleStartGUI, gui);
                     
+                    // Inject BattleManager into BattleStartGUI
+                    battleStartGUI.setBattleManager(battleManager);
+                    
+                    // Replace placeholder in BattleManager
+                    battleManager.setBattleStartGUI(battleStartGUI);
+                    
+                    // Link SetuPGI so BattleManager can update the battle lgo
+                    battleManager.setGUI(gui);
+
                     // Add BattleStartGUI to the SetupGUI card layout 
                     gui.addCard(battleStartGUI, "BattleStart");
                     
@@ -113,6 +126,54 @@ public class PokemonBattleGame
                                 public void run()
                                 {
                                     gui.showScreen("BattleStart");
+                                    
+                                    // Use Swing timer to delay starting the battle logic untol BattleStart screen is visible
+                                    int delay = 2000;
+                                    
+                                    javax.swing.Timer timer = new javax.swing.Timer(delay, new java.awt.event.ActionListener()
+                                    {
+                                        @Override
+                                        public void actionPerformed (java.awt.event.ActionEvent e)
+                                        {
+                                            // Stop timer after it is used once
+                                            ((javax.swing.Timer) e.getSource()).stop();
+                                            
+                                            // Once BattleStart screen is visible, start battle logic in BattleManager
+                                            Thread battleThread = new Thread(new Runnable()
+                                            {
+                                                @Override
+                                                public void run()
+                                                {
+                                                    try
+                                                    {                           
+                                                        // Create new battleManager instance for the game
+                                                        BattleManager battleManager = new BattleManager(game, battleStartGUI, gui);
+                                                        // Link SetupGUI so battleManager can update battle log
+                                                        battleManager.setGUI(gui);
+                                                        battleManager.startBattle(connection);
+                                                    }
+                                                    catch (InterruptedException e)
+                                                    {
+                                                        e.printStackTrace();
+                                                    }
+                                                    catch (SQLException e)
+                                                    {
+                                                        e.printStackTrace();
+                                                    } 
+                                                    catch (InvocationTargetException e)
+                                                    {
+                                                        e.printStackTrace();
+                                                    }
+                                                }         
+                                            });
+                                            // Start the battleThread
+                                            battleThread.start();
+                                        }
+                                    });
+                                    
+                                    // Start the swing timer with no repeats 
+                                    timer.setRepeats(false);
+                                    timer.start();
                                 } 
                             });                         
                         }
@@ -121,33 +182,6 @@ public class PokemonBattleGame
                     pauseThread.start();
                 }
             });
-            
-            // Run battle logic on background thread
-            Thread battleThread = new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    try
-                    {
-                        BattleManager battleManager = new BattleManager(game);
-                        
-                        // Attach GUI to the BattleManager
-                        battleManager.setGUI(gui);
-                        
-                        battleManager.startBattle(connection);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        e.printStackTrace();
-                    } catch (SQLException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            
-            battleThread.start();
         }
         catch (Exception e)
         {
