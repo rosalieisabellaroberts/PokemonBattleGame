@@ -1,0 +1,101 @@
+[33mcommit 133a674d75caf654db3e99376a7ce3d276bae4b2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Tue Nov 4 01:16:50 2025
+
+    Battle card and BattleEnd card developed for GUI (fully functional, aesthetic developments to follow)
+
+[33mcommit cf8cb01ac5f84d931bdf80736cedaa4e60ac3a70[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Sun Nov 2 00:39:09 2025
+
+    GameSetup card and BattleStart card developed for GUI
+
+[33mcommit 7b1dc06a5b730d865698de096f7f051edf607834[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Sat Nov 1 13:54:43 2025
+
+    Final commit after clean up
+
+[33mcommit ed96fb2514f57645774bb1079997a3a13d4cffa4[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Sat Nov 1 13:54:12 2025
+
+    Add .gitignore and .gitattributes
+
+[33mcommit 5b9c27b3c19768f91fca5cefeffa653fefa38dad[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Sat Nov 1 13:31:58 2025
+
+    12 test cases written, and all passed
+
+[33mcommit 9206f0b0c3259fc074b3b53d2d7d2b9e844d666f[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Fri Oct 31 18:13:52 2025
+
+    Refactoring to include abstract classes, interfaces and inheritance through extends keyword
+
+[33mcommit b339742f97717a3bdfb9ed7db5362e345a404daa[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Sat Oct 4 21:03:39 2025
+
+    Database functionalityand error handling
+
+[33mcommit e4a73105040c8b0601ed4d8fc989930d27ad607b[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Sat Oct 4 20:55:02 2025
+
+    Errors resolved for is super effective/is not very effective
+
+[33mcommit 432ddfa892c102b9533e0381fb7f3f29bb806d4e[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Sat Oct 4 19:51:41 2025
+
+    Database functionality fully operational, pokemon data expanded and error handling added
+
+[33mcommit bf578582816df7a3fa253065cc284d6478fd1077[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Sat Oct 4 00:16:53 2025
+
+    Testing and fixing errors with database functionality
+
+[33mcommit c64a555528e925f84ee9a12d81ec7d730e571f97[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Fri Oct 3 22:27:15 2025
+
+    Database fully functional
+
+[33mcommit dba190519d8e785f94cafe5c3e6d9edc02377801[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Fri Oct 3 21:02:16 2025
+
+    Database manager created to replace json parsing
+
+[33mcommit c1e49532e5eeef7ce5dc3aff5ded53d09f179f80[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Fri Oct 3 13:58:08 2025
+
+    PokemonBattleGame fully functional and divided into separate classes
+
+[33mcommit 6a79040726ed105363ca9e3472a33fc09a60695f[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Fri Sep 26 22:34:58 2025
+
+    PokemonBattleGame separated into further classes again
+
+[33mcommit a6bcd51b579eb8c6d94e353dd3e271b36c57ad56[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Wed Sep 24 21:56:54 2025
+
+    PokemonBattleGame separated into further classes
+
+[33mcommit 3c37f572dbadd63e0dc0c1b7920e38ad4eb9ce69[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Mon Sep 22 07:52:16 2025
+
+    Game setup page GUI added (needs to be refined)
+
+[33mcommit e8c1a100474483e2f998d75da705ae24d072e65b[m
+Author: RosalieIsabellaRoberts <rosalieisabellaroberts@gmail.com>
+Date:   Thu Sep 18 12:36:19 2025
+
+    Add PokemonBattleGame Project
